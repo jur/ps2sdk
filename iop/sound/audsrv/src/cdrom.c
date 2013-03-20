@@ -164,10 +164,10 @@ static int initialize_cdda()
 	}
 
 	/* initialize cdrom and set media = cd */
-	sceCdInit(0);
+	sceCdInit(SCECdINIT);
 
 	/* make sure disc is inserted, and check for cdda */
-	sceCdTrayReq(2, (u32 *)&dummy);
+	sceCdTrayReq(SCECdTrayCheck, (u32 *)&dummy);
 	printf("TrayReq returned %d\n", dummy);
 
 	sceCdDiskReady(0);
@@ -237,13 +237,13 @@ int audsrv_get_track_offset(int track)
 */
 static int read_sectors(void *dest, int sector, int count)
 {               	
-	cd_read_mode_t mode;
+	sceCdRMode mode;
 	int max_retries = 32;
 	int tries = 0;
 
 	mode.trycount = max_retries;
-	mode.spindlctrl = CdSpinNom;
-	mode.datapattern = CdSecS2048;
+	mode.spindlctrl = SCECdSpinNom;
+	mode.datapattern = SCECdSecS2048;
 	mode.pad = 0;
 
 	while (tries < max_retries)
