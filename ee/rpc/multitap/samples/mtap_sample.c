@@ -34,13 +34,13 @@ static u32 maxslot[2];
  {
 
   // Enable the vsync interrupt.
-  *GS_REG_CSR |= GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+  _sd(_ld(GS_REG_CSR) | GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0), GS_REG_CSR);
 
   // Wait for the vsync interrupt.
-  while (!(*GS_REG_CSR & (GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)))) { }
+  while (!(_ld(GS_REG_CSR) & (GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)))) { }
 
   // Disable the vsync interrupt.
-  *GS_REG_CSR &= ~GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+  _sd(_ld(GS_REG_CSR) & ~GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0), GS_REG_CSR);
 
   // End function.
   return 0;

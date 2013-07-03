@@ -8,7 +8,28 @@
 #
 # $Id$
 
-SUBDIRS = cube debug/callstacktest graph hello rpc/memorycard rpc/pad tcpip/ee-echo teapot
+SUBDIRS =
+#SUBDIRS += draw/texture
+SUBDIRS += draw/teapot
+#SUBDIRS += cpp-hello
+SUBDIRS += debug/callstacktest
+SUBDIRS += hello
+SUBDIRS += libgs/draw
+SUBDIRS += libgs/doublebuffer
+SUBDIRS += tcpip/ee-echo
+#SUBDIRS += mpeg
+SUBDIRS += graph
+SUBDIRS += rpc/mtap
+SUBDIRS += rpc/ps2snd
+SUBDIRS += rpc/memorycard
+SUBDIRS += rpc/audsrv/playcdda
+SUBDIRS += rpc/audsrv/playwav2
+SUBDIRS += rpc/audsrv/playadpcm
+SUBDIRS += rpc/audsrv/playwav
+SUBDIRS += rpc/audsrv/testcd
+SUBDIRS += rpc/pad
+SUBDIRS += rpc/padx
+#SUBDIRS += font
 
 all: $(patsubst %, _dir_%, $(SUBDIRS)) 
 

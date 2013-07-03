@@ -9,7 +9,7 @@
 
 EE_BIN = graph.elf
 EE_OBJS = graph.o
-E_LIBS = -lpacket -ldma -lgraph -ldraw -lc -lmf
+EE_LIBS = -lpacket -ldma -lgraph -ldraw -lc -lmf
 
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/samples/Makefile.eeglobal

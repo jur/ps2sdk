@@ -23,13 +23,13 @@ u8 actDirect[2][6] = { {0,0,0,0,0,0}, {0,0,0,0,0,0}};
 void wait_vsync() 
 {
 	// Enable the vsync interrupt.
-	*GS_REG_CSR |= GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+	_sd(_ld(GS_REG_CSR) | GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0), GS_REG_CSR);
 
 	// Wait for the vsync interrupt.
-	while (!(*GS_REG_CSR & (GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)))) { }
+	while (!(_ld(GS_REG_CSR) & (GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)))) { }
 
 	// Disable the vsync interrupt.
-	*GS_REG_CSR &= ~GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+	_sd(_ld(GS_REG_CSR) & ~GS_SET_CSR(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0), GS_REG_CSR);
 }
 
 void loadmodules(int free)
