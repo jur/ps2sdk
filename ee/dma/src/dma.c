@@ -68,14 +68,14 @@ int dma_channel_initialize(int channel, void *handler, int flags)
 	// Clear any saved dmatags
 	if (dma_asr0[channel])
 	{
-		*(vu32 *)dma_asr0[channel] = 0;
-		*(vu32 *)dma_asr1[channel] = 0;
+		_sw(0, dma_asr0[channel]);
+		_sw(0, dma_asr1[channel]);
 	}
 
 	// Clear saved spr address
 	if (dma_sadr[channel])
 	{
-		*(vu32 *)dma_sadr[channel] = 0;
+		_sw(0, dma_sadr[channel]);
 	}
 
 	// If a handler is provided...
@@ -109,7 +109,7 @@ int dma_channel_initialize(int channel, void *handler, int flags)
 void dma_channel_fast_waits(int channel)
 {
 
-	*DMA_REG_PCR |= 1 << channel;
+	_sw(_lw(DMA_REG_PCR) | (1 << channel), DMA_REG_PCR);
 
 }
 
@@ -132,7 +132,7 @@ int dma_channel_wait(int channel, int timeout)
 {
 
 	// While the channel is not ready...
-	while (*((vu32 *)dma_chcr[channel]) & 0x00000100)
+	while (_lw(dma_chcr[channel]) & 0x00000100)
 	{
 
 		// Decrement the timeout counter, exiting if it expires.
@@ -159,7 +159,7 @@ int dma_channel_send_chain(int channel, void *data, int data_size, int flags, in
 {
 
 	// clear channel status
-	*DMA_REG_STAT = DMA_SET_STAT(1 << channel,0,0,0,0,0,0);
+	_sw(DMA_SET_STAT(1 << channel,0,0,0,0,0,0), DMA_REG_STAT);
 
 	if (flags & DMA_FLAG_INTERRUPTSAFE)
 	{
@@ -171,16 +171,16 @@ int dma_channel_send_chain(int channel, void *data, int data_size, int flags, in
 	}
 
 	// Set the size of the data, in quadwords.
-	*(vu32 *)dma_qwc[channel] = DMA_SET_QWC(0);
+	_sw(DMA_SET_QWC(0), dma_qwc[channel]);
 
 	// Set the address of the data.
-	*(vu32 *)dma_madr[channel] = DMA_SET_MADR(0, 0);
+	_sw(DMA_SET_MADR(0, 0), dma_madr[channel]);
 
 	// Set the address of the data tag.
-	*(vu32 *)dma_tadr[channel] = DMA_SET_TADR((u32)data, spr);
+	_sw(DMA_SET_TADR((u32)data, spr), dma_tadr[channel]);
 
 	// Start the transfer.
-	*(vu32 *)dma_chcr[channel] = DMA_SET_CHCR(1, 1, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0);
+	_sw(DMA_SET_CHCR(1, 1, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0), dma_chcr[channel]);
 
 	return 0;
 
@@ -190,19 +190,19 @@ int dma_channel_send_chain_ucab(int channel, void *data, int qwc, int flags)
 {
 
 	// clear channel status
-	*DMA_REG_STAT = 1 << channel;
+	_sw(1 << channel, DMA_REG_STAT);
 
 	// Set the size of the data, in quadwords.
-	*(vu32 *)dma_qwc[channel] = DMA_SET_QWC(0);
+	_sw(DMA_SET_QWC(0), dma_qwc[channel]);
 
 	// Set the address of the data.
-	*(vu32 *)dma_madr[channel] = DMA_SET_MADR(0, 0);
+	_sw(DMA_SET_MADR(0, 0), dma_madr[channel]);
 
 	// Set the address of the data tag.
-	*(vu32 *)dma_tadr[channel] = DMA_SET_TADR((u32)data - 0x30000000, 0);
+	_sw(DMA_SET_TADR((u32)data - 0x30000000, 0), dma_tadr[channel]);
 
 	// Start the transfer.
-	*(vu32 *)dma_chcr[channel] = DMA_SET_CHCR(1, 1, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0);
+	_sw(DMA_SET_CHCR(1, 1, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0), dma_chcr[channel]);
 
 	// End function.
 	return 0;
@@ -213,7 +213,7 @@ int dma_channel_send_normal(int channel, void *data, int qwc, int flags, int spr
 {
 
 	// clear channel status
-	*DMA_REG_STAT = DMA_SET_STAT(1 << channel,0,0,0,0,0,0);
+	_sw(DMA_SET_STAT(1 << channel,0,0,0,0,0,0), DMA_REG_STAT);
 
 	// Not sure if this should be here.
 	if (flags & DMA_FLAG_INTERRUPTSAFE)
@@ -226,13 +226,13 @@ int dma_channel_send_normal(int channel, void *data, int qwc, int flags, int spr
 	}
 
 	// Set the size of the data, in quadwords.
-	*(vu32 *)dma_qwc[channel] = DMA_SET_QWC(qwc);
+	_sw(DMA_SET_QWC(qwc), dma_qwc[channel]);
 
 	// Set the address of the data.
-	*(vu32 *)dma_madr[channel] = DMA_SET_MADR((u32)data, spr);
+	_sw(DMA_SET_MADR((u32)data, spr), dma_madr[channel]);
 
 	// Start the transfer.
-	*(vu32 *)dma_chcr[channel] = DMA_SET_CHCR(1, 0, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0);
+	_sw(DMA_SET_CHCR(1, 0, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0), dma_chcr[channel]);
 
 	return 0;
 
@@ -242,7 +242,7 @@ int dma_channel_send_normal_ucab(int channel, void *data, int qwc, int flags)
 {
 
 	// clear channel status
-	*DMA_REG_STAT = DMA_SET_STAT(1 << channel,0,0,0,0,0,0);
+	_sw(DMA_SET_STAT(1 << channel,0,0,0,0,0,0), DMA_REG_STAT);
 
 	// Not sure if this should be here.
 	if (flags & DMA_FLAG_INTERRUPTSAFE)
@@ -255,13 +255,13 @@ int dma_channel_send_normal_ucab(int channel, void *data, int qwc, int flags)
 	}
 
 	// Set the size of the data, in quadwords.
-	*(vu32 *)dma_qwc[channel] = DMA_SET_QWC(qwc);
+	_sw(DMA_SET_QWC(qwc), dma_qwc[channel]);
 
 	// Set the address of the data.
-	*(vu32 *)dma_madr[channel] = DMA_SET_MADR((u32)data - 0x30000000, 0);
+	_sw(DMA_SET_MADR((u32)data - 0x30000000, 0), dma_madr[channel]);
 
 	// Start the transfer.
-	*(vu32 *)dma_chcr[channel] = DMA_SET_CHCR(1, 0, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0);
+	_sw(DMA_SET_CHCR(1, 0, 0, flags & DMA_FLAG_TRANSFERTAG, 1, 1, 0), dma_chcr[channel]);
 
 	return 0;
 
@@ -283,13 +283,13 @@ int dma_channel_receive_chain(int channel, void *data, int data_size, int flags,
 	}
 
 	// Set the size of the data, in quadwords.
-	*(vu32 *)dma_qwc[channel] = DMA_SET_QWC((data_size + 15) >> 4);
+	_sw(DMA_SET_QWC((data_size + 15) >> 4), dma_qwc[channel]);
 
 	// Set the address of the data.
-	*(vu32 *)dma_madr[channel] = DMA_SET_MADR((u32)data, spr);
+	_sw(DMA_SET_MADR((u32)data, spr), dma_madr[channel]);
 
 	// Start the transfer.
-	*(vu32 *)dma_chcr[channel] = DMA_SET_CHCR(0, 1, 0, 0, 0, 1, 0);
+	_sw(DMA_SET_CHCR(0, 1, 0, 0, 0, 1, 0), dma_chcr[channel]);
 
 	// End function.
 	return 0;
@@ -312,13 +312,13 @@ int dma_channel_receive_normal(int channel, void *data, int data_size, int flags
 	}
 
 	// Set the size of the data, in quadwords.
-	*(vu32 *)dma_qwc[channel] = DMA_SET_QWC((data_size + 15) >> 4);
+	_sw(DMA_SET_QWC((data_size + 15) >> 4), dma_qwc[channel]);
 
 	// Set the address of the data.
-	*(vu32 *)dma_madr[channel] = DMA_SET_MADR((u32)data, spr);
+	_sw(DMA_SET_MADR((u32)data, spr), dma_madr[channel]);
 
 	// Start the transfer.
-	*(vu32 *)dma_chcr[channel] = DMA_SET_CHCR(0, 0, 0, 0, 0, 1, 0);
+	_sw(DMA_SET_CHCR(0, 0, 0, 0, 0, 1, 0), dma_chcr[channel]);
 
 	// End function.
 	return 0;

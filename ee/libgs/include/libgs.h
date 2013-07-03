@@ -12,6 +12,8 @@
 #ifndef _LIBGS_H_
 #define _LIBGS_H_
 
+#include <tamtypes.h>
+
 /**/
 #define GS_DISABLE	0
 #define GS_ENABLE	1
@@ -235,8 +237,8 @@ enum GsTexFunctions{
 #ifndef QWORD
 typedef struct {
 
-	unsigned long lo;
-	unsigned long hi;
+	u64 lo;
+	u64 hi;
 
 }QWORD			__attribute__((aligned(16)));/*aligne 128bits*/
 
@@ -267,10 +269,10 @@ typedef struct {
 
 /*SMODE2*/
 typedef struct {
-	unsigned interlace   :1;
-	unsigned field_frame :1;
-	unsigned vesta_dpms  :2;
-	unsigned long pad2	 :60;
+	u64 interlace   :1;
+	u64 field_frame :1;
+	u64 vesta_dpms  :2;
+	u64 pad2	:60;
 }GS_SMODE2;
 
 /*DISPFB*/
@@ -402,16 +404,16 @@ typedef struct {
 ----------------------------------------------------------*/
 
 typedef struct {
-	unsigned long prim_type	:3;
-	unsigned long iip		:1;
-	unsigned long tme		:1;
-	unsigned long fge		:1;
-	unsigned long abe		:1;
-	unsigned long aa1		:1;
-	unsigned long fst		:1;
-	unsigned long ctxt		:1;
-	unsigned long fix		:1;
-	unsigned long pad1		:53;
+	u64 prim_type	:3;
+	u64 iip		:1;
+	u64 tme		:1;
+	u64 fge		:1;
+	u64 abe		:1;
+	u64 aa1		:1;
+	u64 fst		:1;
+	u64 ctxt		:1;
+	u64 fix		:1;
+	u64 pad1		:53;
 }GS_PRIM;
 
 typedef struct {
@@ -428,10 +430,10 @@ typedef struct {
 }GS_ST;
 
 typedef struct {
-	unsigned long u		:14;
-	unsigned long pad1	:2;
-	unsigned long v		:14;
-	unsigned long pad2	:34;
+	u64 u		:14;
+	u64 pad1	:2;
+	u64 v		:14;
+	u64 pad2	:34;
 }GS_UV;
 
 typedef struct {
@@ -448,290 +450,290 @@ typedef struct {
 }GS_XYZ;
 
 typedef struct {
-	unsigned long tb_addr		:14;
-	unsigned long tb_width		:6;
-	unsigned long psm		:6;
-	unsigned long tex_width		:4;
-	unsigned long tex_height	:4;
-	unsigned long tex_cc		:1;
-	unsigned long tex_funtion	:2;
-	unsigned long cb_addr		:14;
-	unsigned long clut_pixmode	:4;
-	unsigned long clut_smode	:1;
-	unsigned long clut_offset	:5;
-	unsigned long clut_loadmode	:3;
+	u64 tb_addr		:14;
+	u64 tb_width		:6;
+	u64 psm		:6;
+	u64 tex_width		:4;
+	u64 tex_height	:4;
+	u64 tex_cc		:1;
+	u64 tex_funtion	:2;
+	u64 cb_addr		:14;
+	u64 clut_pixmode	:4;
+	u64 clut_smode	:1;
+	u64 clut_offset	:5;
+	u64 clut_loadmode	:3;
 
 }GS_TEX0;
 
 typedef struct {
-	unsigned long wrap_mode_s	:2;
-	unsigned long wrap_mode_t	:2;
-	unsigned long min_clamp_u	:10;
-	unsigned long max_clamp_u	:10;
-	unsigned long min_clamp_v	:10;
-	unsigned long max_clamp_v	:10;
-	unsigned long pad0			:20;
+	u64 wrap_mode_s	:2;
+	u64 wrap_mode_t	:2;
+	u64 min_clamp_u	:10;
+	u64 max_clamp_u	:10;
+	u64 min_clamp_v	:10;
+	u64 max_clamp_v	:10;
+	u64 pad0			:20;
 }GS_CLAMP;
 
 typedef struct {
-		unsigned long pad1	:56;
-		unsigned char f;
+		u64 pad1	:56;
+		u64 f;
 }GS_FOG;
 
 typedef struct {
-	unsigned long lcm			:1;
-	unsigned long pad1			:1;
-	unsigned long mxl			:3;
-	unsigned long mmag			:1;
-	unsigned long mmin			:3;
-	unsigned long mtba			:1;
-	unsigned long pad2			:9;
-	unsigned long l				:2;
-	unsigned long pad3			:11;
-	unsigned long k				:12;
-	unsigned long pad4			:20;
+	u64 lcm			:1;
+	u64 pad1			:1;
+	u64 mxl			:3;
+	u64 mmag			:1;
+	u64 mmin			:3;
+	u64 mtba			:1;
+	u64 pad2			:9;
+	u64 l				:2;
+	u64 pad3			:11;
+	u64 k				:12;
+	u64 pad4			:20;
 }GS_TEX1;
 
 typedef struct {
-	unsigned long pad1			:20;
-	unsigned long psm			:6;
-	unsigned long pad2			:11;
-	unsigned long cb_addr		:14;
-	unsigned long clut_psm		:4;
-	unsigned long clut_smode	:1;
-	unsigned long clut_offset	:5;
-	unsigned long clut_loadmode	:3;
+	u64 pad1			:20;
+	u64 psm			:6;
+	u64 pad2			:11;
+	u64 cb_addr		:14;
+	u64 clut_psm		:4;
+	u64 clut_smode	:1;
+	u64 clut_offset	:5;
+	u64 clut_loadmode	:3;
 }GS_TEX2;
 
 typedef struct {
-	unsigned long  offset_x	:16;
+	u64  offset_x	:16;
 	unsigned short pad1;
-	unsigned long  offset_y	:16;
+	u64  offset_y	:16;
 	unsigned short pad2;
 } GS_XYOFFSET;
 
 typedef struct {
-	unsigned long control:1;
-	unsigned long pad1	:63;
+	u64 control:1;
+	u64 pad1	:63;
 }GS_PRMODECONT;
 
 typedef struct {
-	unsigned long pad1	:3;
-	unsigned long iip	:1;
-	unsigned long tme	:1;
-	unsigned long fge	:1;
-	unsigned long abe	:1;
-	unsigned long aa1	:1;
-	unsigned long fst	:1;
-	unsigned long ctxt	:1;
-	unsigned long fix	:1;
-	unsigned long pad2	:53;
+	u64 pad1	:3;
+	u64 iip	:1;
+	u64 tme	:1;
+	u64 fge	:1;
+	u64 abe	:1;
+	u64 aa1	:1;
+	u64 fst	:1;
+	u64 ctxt	:1;
+	u64 fix	:1;
+	u64 pad2	:53;
 }GS_PRMODE;
 
 typedef struct {
-	unsigned long cb_width		:6;
-	unsigned long clut_uoffset	:6;
-	unsigned long clut_voffset	:10;
-	unsigned long pad0:42;
+	u64 cb_width		:6;
+	u64 clut_uoffset	:6;
+	u64 clut_voffset	:10;
+	u64 pad0:42;
 }GS_TEXCLUT;
 
 typedef struct {
-	unsigned long mask:2;
-	unsigned long pad0:62;
+	u64 mask:2;
+	u64 pad0:62;
 }GS_SCANMSK;
 
 typedef struct {
-	unsigned long tb_addr1	:14;
-	unsigned long tb_width1	:6;
-	unsigned long tb_addr2	:14;
-	unsigned long tb_width2	:6;
-	unsigned long tb_addr3	:14;
-	unsigned long tb_width3	:6;
-	unsigned long pad1		:4;
+	u64 tb_addr1	:14;
+	u64 tb_width1	:6;
+	u64 tb_addr2	:14;
+	u64 tb_width2	:6;
+	u64 tb_addr3	:14;
+	u64 tb_width3	:6;
+	u64 pad1		:4;
 }GS_MIPTBP1;
 
 typedef struct {
-	unsigned long tb_addr4	:14;
-	unsigned long tb_width4	:6;
-	unsigned long tb_addr5	:14;
-	unsigned long tb_width5	:6;
-	unsigned long tb_addr6	:14;
-	unsigned long tb_width6	:6;
-	unsigned long pad0		:4;
+	u64 tb_addr4	:14;
+	u64 tb_width4	:6;
+	u64 tb_addr5	:14;
+	u64 tb_width5	:6;
+	u64 tb_addr6	:14;
+	u64 tb_width6	:6;
+	u64 pad0		:4;
 }GS_MIPTBP2;
 
 typedef struct {
-	unsigned long alpha_0		: 8;
-	unsigned long pad1			: 7;
-	unsigned long alpha_method	: 1;
-	unsigned long pad2			:16;
-	unsigned long alpha_1		: 8;
-	unsigned long pad3			:24;
+	u64 alpha_0		: 8;
+	u64 pad1			: 7;
+	u64 alpha_method	: 1;
+	u64 pad2			:16;
+	u64 alpha_1		: 8;
+	u64 pad3			:24;
 }GS_TEXA;
 
 typedef struct {
-	unsigned long r		:8;
-	unsigned long g		:8;
-	unsigned long b		:8;
-	unsigned long pad1	:40;
+	u64 r		:8;
+	u64 g		:8;
+	u64 b		:8;
+	u64 pad1	:40;
 }GS_FOGCOLOR;
 
 typedef struct {
-	unsigned long pad1;			// Pad With Zeros			
+	u64 pad1;			// Pad With Zeros			
 } GS_TEXFLUSH;
 
 typedef struct {
-	unsigned long clip_x0 :11;
-	unsigned long pad1    :5;
-	unsigned long clip_x1 :11;
-	unsigned long pad2    :5;
-	unsigned long clip_y0 :11;
-	unsigned long pad3    :5;
-	unsigned long clip_y1 :11;
-	unsigned long pad4    :5;
+	u64 clip_x0 :11;
+	u64 pad1    :5;
+	u64 clip_x1 :11;
+	u64 pad2    :5;
+	u64 clip_y0 :11;
+	u64 pad3    :5;
+	u64 clip_y1 :11;
+	u64 pad4    :5;
 }GS_SCISSOR;
 
 typedef struct {
-	unsigned long a		:2;
-	unsigned long b		:2;
-	unsigned long c		:2;
-	unsigned long d		:2;
-	unsigned long pad0	:24;
-	unsigned long alpha	:8;
-	unsigned long pad1	:24;
+	u64 a		:2;
+	u64 b		:2;
+	u64 c		:2;
+	u64 d		:2;
+	u64 pad0	:24;
+	u64 alpha	:8;
+	u64 pad1	:24;
 }GS_ALPHA;
 
 typedef struct {
-	unsigned long dimx00:3;
-	unsigned long pad0:1;
-	unsigned long dimx01:3;
-	unsigned long pad1:1;
-	unsigned long dimx02:3;
-	unsigned long pad2:1;
-	unsigned long dimx03:3;
-	unsigned long pad3:1;
+	u64 dimx00:3;
+	u64 pad0:1;
+	u64 dimx01:3;
+	u64 pad1:1;
+	u64 dimx02:3;
+	u64 pad2:1;
+	u64 dimx03:3;
+	u64 pad3:1;
 
-	unsigned long dimx10:3;
-	unsigned long pad4:1;
-	unsigned long dimx11:3;
-	unsigned long pad5:1;
-	unsigned long dimx12:3;
-	unsigned long pad6:1;
-	unsigned long dimx13:3;
-	unsigned long pad7:1;
+	u64 dimx10:3;
+	u64 pad4:1;
+	u64 dimx11:3;
+	u64 pad5:1;
+	u64 dimx12:3;
+	u64 pad6:1;
+	u64 dimx13:3;
+	u64 pad7:1;
 
-	unsigned long dimx20:3;
-	unsigned long pad8:1;
-	unsigned long dimx21:3;
-	unsigned long pad9:1;
-	unsigned long dimx22:3;
-	unsigned long pad10:1;
-	unsigned long dimx23:3;
-	unsigned long pad11:1;
+	u64 dimx20:3;
+	u64 pad8:1;
+	u64 dimx21:3;
+	u64 pad9:1;
+	u64 dimx22:3;
+	u64 pad10:1;
+	u64 dimx23:3;
+	u64 pad11:1;
 
-	unsigned long dimx30:3;
-	unsigned long pad12:1;
-	unsigned long dimx31:3;
-	unsigned long pad13:1;
-	unsigned long dimx32:3;
-	unsigned long pad14:1;
-	unsigned long dimx33:3;
-	unsigned long pad15:1;
+	u64 dimx30:3;
+	u64 pad12:1;
+	u64 dimx31:3;
+	u64 pad13:1;
+	u64 dimx32:3;
+	u64 pad14:1;
+	u64 dimx33:3;
+	u64 pad15:1;
 } GS_DIMX;
 
 typedef struct {
-	unsigned long enable:1;
-	unsigned long pad01:63;
+	u64 enable:1;
+	u64 pad01:63;
 } GS_DTHE;
 
 typedef struct {
-	unsigned long clamp:1;
-	unsigned long pad01:63;
+	u64 clamp:1;
+	u64 pad01:63;
 }GS_COLCLAMP;
 
 typedef struct {
-	unsigned long atest_enable		:1;
-	unsigned long atest_method		:3;
-	unsigned long atest_reference	:8;
-	unsigned long atest_fail_method	:2;
-	unsigned long datest_enable		:1;
-	unsigned long datest_mode		:1;
-	unsigned long ztest_enable		:1;
-	unsigned long ztest_method		:2;
-	unsigned long pad1				:45;
+	u64 atest_enable		:1;
+	u64 atest_method		:3;
+	u64 atest_reference	:8;
+	u64 atest_fail_method	:2;
+	u64 datest_enable		:1;
+	u64 datest_mode		:1;
+	u64 ztest_enable		:1;
+	u64 ztest_method		:2;
+	u64 pad1				:45;
 } GS_TEST;
 
 typedef struct {
-	unsigned long enable:1;
-	unsigned long pad0:63;
+	u64 enable:1;
+	u64 pad0:63;
 }GS_PABE;
 
 typedef struct {
-	unsigned long alpha:1;
-	unsigned long pad0:63;
+	u64 alpha:1;
+	u64 pad0:63;
 }GS_FBA;
 
 typedef struct {
-	unsigned long fb_addr	:9;
-	unsigned long pad1		:7;
-	unsigned long fb_width	:6;
-	unsigned long pad2		:2;
-	unsigned long psm	:6;
-	unsigned long pad3		:2;
-	unsigned long draw_mask	:32;
+	u64 fb_addr	:9;
+	u64 pad1		:7;
+	u64 fb_width	:6;
+	u64 pad2		:2;
+	u64 psm	:6;
+	u64 pad3		:2;
+	u64 draw_mask	:32;
 } GS_FRAME;
 
 typedef struct {
-	unsigned long fb_addr	:9;
-	unsigned long pad1			:15;
-	unsigned long psm		:4;
-	unsigned long pad2			:4;
-	unsigned long update_mask	:1;
-	unsigned long pad3			:31;
+	u64 fb_addr	:9;
+	u64 pad1			:15;
+	u64 psm		:4;
+	u64 pad2			:4;
+	u64 update_mask	:1;
+	u64 pad3			:31;
 }GS_ZBUF;
 
 typedef struct {
-	unsigned long src_addr	  :14;
-	unsigned long pad1		  :2;
-	unsigned long src_width	  :6;
-	unsigned long pad2		  :2;
-	unsigned long src_pixmode :6;
-	unsigned long pad3		  :2;
-	unsigned long dest_addr	  :14;
-	unsigned long pad4		  :2;
-	unsigned long dest_width  :6;
-	unsigned long pad5		  :2;
-	unsigned long dest_pixmode:6;
-	unsigned long pad6		  :2;
+	u64 src_addr	  :14;
+	u64 pad1		  :2;
+	u64 src_width	  :6;
+	u64 pad2		  :2;
+	u64 src_pixmode :6;
+	u64 pad3		  :2;
+	u64 dest_addr	  :14;
+	u64 pad4		  :2;
+	u64 dest_width  :6;
+	u64 pad5		  :2;
+	u64 dest_pixmode:6;
+	u64 pad6		  :2;
 }GS_BITBLTBUF;
 
 typedef struct {
-	unsigned long src_x		:11;
-	unsigned long pad1		:5;
-	unsigned long src_y		:11;
-	unsigned long pad2		:5;
-	unsigned long dest_x	:11;
-	unsigned long pad3		:5;
-	unsigned long dest_y	:11;
-	unsigned long direction	:2;
-	unsigned long pad4		:3;
+	u64 src_x		:11;
+	u64 pad1		:5;
+	u64 src_y		:11;
+	u64 pad2		:5;
+	u64 dest_x	:11;
+	u64 pad3		:5;
+	u64 dest_y	:11;
+	u64 direction	:2;
+	u64 pad4		:3;
 }GS_TRXPOS;
 
 typedef struct {
-	unsigned long trans_w	:12;
-	unsigned long pad1		:20;
-	unsigned long trans_h	:12;
-	unsigned long pad2		:20;
+	u64 trans_w	:12;
+	u64 pad1		:20;
+	u64 trans_h	:12;
+	u64 pad2		:20;
 }GS_TRXREG;
 
 
 typedef struct {
-	unsigned long trans_dir	:2;
-	unsigned long pad1		:62;
+	u64 trans_dir	:2;
+	u64 pad1		:62;
 }GS_TRXDIR;
 
 typedef struct {
-	unsigned long data;
+	u64 data;
 }GS_HWREG;
 
 typedef struct {
@@ -740,7 +742,7 @@ typedef struct {
 }GS_SIGNAL;
 
 typedef struct {
-	unsigned long pad0;
+	u64 pad0;
 }GS_FINISH;
 
 
@@ -750,7 +752,7 @@ typedef struct {
 }GS_LABEL;
 
 typedef struct {
-	unsigned long pad0;
+	u64 pad0;
 }GS_NOP;
 
 /*--------------------------------------------------------
@@ -761,202 +763,202 @@ typedef struct {
 
 typedef struct {
 	GS_PRIM			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_PRIM;
 
 typedef struct {
 	GS_RGBAQ		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_RGBAQ;
 
 typedef struct {
 	GS_ST			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_ST;
 
 typedef struct {
 	GS_UV			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_UV;
 
 typedef struct {
 	GS_XYZF			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_XYZF;
 
 typedef struct {
 	GS_XYZ			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_XYZ;
 
 typedef struct {
 	GS_TEX0			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TEX0;
 
 typedef struct {
 	GS_CLAMP		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_CLAMP;
 
 typedef struct {
 	GS_FOG			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_FOG;
 
 typedef struct {
 	GS_TEX1			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TEX1;
 
 typedef struct {
 	GS_TEX2			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TEX2;
 
 typedef struct {
 	GS_XYOFFSET		data;
-	unsigned long	reg;
+	u64	reg;
 } GS_R_XYOFFSET;
 
 typedef struct {
 	GS_PRMODECONT	data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_PRMODECONT;
 
 typedef struct {
 	GS_PRMODE		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_PRMODE;
 
 typedef struct {
 	GS_TEXCLUT		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TEXCLUT;
 
 typedef struct {
 	GS_SCANMSK		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_SCANMSK;
 
 typedef struct {
 	GS_MIPTBP1		data;
-	unsigned long	reg;
+	u64	reg;
 } GS_R_MIPTBP1;
 
 typedef struct {
 	GS_MIPTBP2		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_MIPTBP2;
 
 typedef struct {
 	GS_TEXA			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TEXA;
 
 typedef struct {
 	GS_FOGCOLOR		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_FOGCOLOR;
 
 typedef struct {
 	GS_TEXFLUSH		data;			
-	unsigned long	reg;			
+	u64	reg;			
 } GS_R_TEXFLUSH;
 
 typedef struct {
 	GS_SCISSOR		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_SCISSOR;
 
 typedef struct {
 	GS_ALPHA		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_ALPHA;
 
 typedef struct {
 	GS_DIMX			data;
-	unsigned long	reg;
+	u64	reg;
 } GS_R_DIMX;
 
 typedef struct {
 	GS_DTHE			data;
-	unsigned long	reg;
+	u64	reg;
 } GS_R_DTHE;
 
 typedef struct {
 	GS_COLCLAMP		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_COLCLAMP;
 
 typedef struct {
 	GS_TEST			data;
-	unsigned long	reg;
+	u64	reg;
 } GS_R_TEST;
 
 typedef struct {
 	GS_PABE			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_PABE;
 
 typedef struct {
 	GS_FBA			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_FBA;
 
 typedef struct {
 	GS_FRAME		data;
-	unsigned long	reg;
+	u64	reg;
 } GS_R_FRAME;
 
 typedef struct {
 	GS_ZBUF			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_ZBUF;
 
 typedef struct {
 	GS_BITBLTBUF	data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_BITBLTBUF;
 
 typedef struct {
 	GS_TRXPOS		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TRXPOS;
 
 typedef struct {
 	GS_TRXREG		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TRXREG;
 
 typedef struct {
 	GS_TRXDIR		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_TRXDIR;
 
 typedef struct {
 	GS_HWREG		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_HWREG;
 
 typedef struct {
 	GS_SIGNAL		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_SIGNAL;
 
 typedef struct {
 	GS_FINISH		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_FINISH;
 
 typedef struct {
 	GS_LABEL		data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_LABEL;
 
 typedef struct {
 	GS_NOP			data;
-	unsigned long	reg;
+	u64	reg;
 }GS_R_NOP;
 
 /*----------------------------------------------------
@@ -966,124 +968,138 @@ typedef struct {
 ----------------------------------------------------*/
 
 #define GS_SET_PMODE(enable_rc1, enable_rc2, mmod, amod, blend_style, blend_value) \
-			*(volatile unsigned long *)gs_p_pmode =			\
-		(unsigned long)((enable_rc1	) & 0x00000001) <<  0 | \
-		(unsigned long)((enable_rc2	) & 0x00000001) <<  1 | \
-		(unsigned long)((1			) & 0x00000007) <<  2 | \
-		(unsigned long)((mmod		) & 0x00000001) <<  5 | \
-		(unsigned long)((amod		) & 0x00000001) <<  6 | \
-		(unsigned long)((blend_style) & 0x00000001) <<  7 | \
-		(unsigned long)((blend_value) & 0x000000FF) <<  8
+	_sd( \
+		(u64)((enable_rc1	) & 0x00000001) <<  0 | \
+		(u64)((enable_rc2	) & 0x00000001) <<  1 | \
+		(u64)((1			) & 0x00000007) <<  2 | \
+		(u64)((mmod		) & 0x00000001) <<  5 | \
+		(u64)((amod		) & 0x00000001) <<  6 | \
+		(u64)((blend_style) & 0x00000001) <<  7 | \
+		(u64)((blend_value) & 0x000000FF) <<  8, \
+		gs_p_pmode)
 
 /* un-documented
 #define GS_SET_SMODE1(interlace, field_frame, vesta_dpms) \
-			*(volatile unsigned long *)gs_p_smode1=			\
+			_sd(, gs_p_smode1)
 		
 */
 
 #define GS_SET_SMODE2(interlace, field_frame, vesta_dpms) \
-			*(volatile unsigned long *)gs_p_smode2 =		\
-		(unsigned long)((interlace	) & 0x00000001) <<  0 | \
-		(unsigned long)((field_frame) & 0x00000001) <<  1 | \
-		(unsigned long)((vesta_dpms	) & 0x00000003) <<  2
+	_sd( \
+		(u64)((interlace	) & 0x00000001) <<  0 | \
+		(u64)((field_frame) & 0x00000001) <<  1 | \
+		(u64)((vesta_dpms	) & 0x00000003) <<  2, \
+		gs_p_smode2)
 
 #define GS_SET_DISPFB1(address, width, psm, x, y) \
-			*(volatile unsigned long *)gs_p_dispfb1=\
-		(unsigned long)((address	) & 0x000001FF) <<  0 | \
-		(unsigned long)((width		) & 0x0000003F) <<  9 | \
-		(unsigned long)((psm	) & 0x0000001F) << 15 | \
-		(unsigned long)((x			) & 0x000007FF) << 32 | \
-		(unsigned long)((y			) & 0x000007FF) << 43
+	_sd( \
+		(u64)((address	) & 0x000001FF) <<  0 | \
+		(u64)((width		) & 0x0000003F) <<  9 | \
+		(u64)((psm	) & 0x0000001F) << 15 | \
+		(u64)((x			) & 0x000007FF) << 32 | \
+		(u64)((y			) & 0x000007FF) << 43, \
+		gs_p_dispfb1)
 
 #define GS_SET_DISPFB2(address, width, psm, x, y) \
-			*(volatile unsigned long *)gs_p_dispfb2=\
-		(unsigned long)((address	) & 0x000001FF) <<  0 | \
-		(unsigned long)((width		) & 0x0000003F) <<  9 | \
-		(unsigned long)((psm	) & 0x0000001F) << 15 | \
-		(unsigned long)((x			) & 0x000007FF) << 32 | \
-		(unsigned long)((y			) & 0x000007FF) << 43
+	_sd( \
+		(u64)((address	) & 0x000001FF) <<  0 | \
+		(u64)((width		) & 0x0000003F) <<  9 | \
+		(u64)((psm	) & 0x0000001F) << 15 | \
+		(u64)((x			) & 0x000007FF) << 32 | \
+		(u64)((y			) & 0x000007FF) << 43, \
+		gs_p_dispfb2)
 
 #define GS_SET_DISPLAY1(display_x, display_y,magnify_h,magnify_v,display_w,display_h) \
-			*(volatile unsigned long *)gs_p_display1 =		\
-		(unsigned long)((display_x) & 0x00000FFF) <<  0 |	\
-		(unsigned long)((display_y) & 0x000007FF) << 12 |	\
-		(unsigned long)((magnify_h) & 0x0000000F) << 23 |	\
-		(unsigned long)((magnify_v) & 0x00000003) << 27 |	\
-		(unsigned long)((display_w) & 0x00000FFF) << 32 |	\
-		(unsigned long)((display_h) & 0x000007FF) << 44
+	_sd( \
+		(u64)((display_x) & 0x00000FFF) <<  0 |	\
+		(u64)((display_y) & 0x000007FF) << 12 |	\
+		(u64)((magnify_h) & 0x0000000F) << 23 |	\
+		(u64)((magnify_v) & 0x00000003) << 27 |	\
+		(u64)((display_w) & 0x00000FFF) << 32 |	\
+		(u64)((display_h) & 0x000007FF) << 44, \
+		gs_p_display1)
 
 #define GS_SET_DISPLAY2(display_x, display_y,magnify_h,magnify_v,display_w,display_h) \
-			*(volatile unsigned long *)gs_p_display2 =		\
-		(unsigned long)((display_x) & 0x00000FFF) <<  0 |	\
-		(unsigned long)((display_y) & 0x000007FF) << 12 |	\
-		(unsigned long)((magnify_h) & 0x0000000F) << 23 |	\
-		(unsigned long)((magnify_v) & 0x00000003) << 27 |	\
-		(unsigned long)((display_w) & 0x00000FFF) << 32 |	\
-		(unsigned long)((display_h) & 0x000007FF) << 44
+	_sd( \
+		(u64)((display_x) & 0x00000FFF) <<  0 |	\
+		(u64)((display_y) & 0x000007FF) << 12 |	\
+		(u64)((magnify_h) & 0x0000000F) << 23 |	\
+		(u64)((magnify_v) & 0x00000003) << 27 |	\
+		(u64)((display_w) & 0x00000FFF) << 32 |	\
+		(u64)((display_h) & 0x000007FF) << 44, \
+		gs_p_display2)
 
 #define GS_SET_EXTBUF(A,B,C,D,E,F,G,H) \
-			*(volatile unsigned long *)gs_p_extbuf =	\
-		(unsigned long)((A) & 0x00003FFF) <<  0 | \
-		(unsigned long)((B) & 0x0000003F) << 14 | \
-		(unsigned long)((C) & 0x00000003) << 20 | \
-		(unsigned long)((D) & 0x00000001) << 22 | \
-		(unsigned long)((E) & 0x00000003) << 23 | \
-		(unsigned long)((F) & 0x00000003) << 25 | \
-		(unsigned long)((G) & 0x000007FF) << 32 | \
-		(unsigned long)((H) & 0x000007FF) << 43
+	_sd( \
+		(u64)((A) & 0x00003FFF) <<  0 | \
+		(u64)((B) & 0x0000003F) << 14 | \
+		(u64)((C) & 0x00000003) << 20 | \
+		(u64)((D) & 0x00000001) << 22 | \
+		(u64)((E) & 0x00000003) << 23 | \
+		(u64)((F) & 0x00000003) << 25 | \
+		(u64)((G) & 0x000007FF) << 32 | \
+		(u64)((H) & 0x000007FF) << 43, \
+		gs_p_extbuf)
 
 #define GS_SET_EXTDATA(x, y, sample_r_h, sample_r_v, write_w, write_h) \
-			*(volatile unsigned long *)gs_p_extdata =		\
-		(unsigned long)((x			) & 0x00000FFF) <<  0 | \
-		(unsigned long)((y			) & 0x000007FF) << 12 | \
-		(unsigned long)((sample_r_h	) & 0x0000000F) << 23 | \
-		(unsigned long)((sample_r_v	) & 0x00000003) << 27 | \
-		(unsigned long)((write_w	) & 0x00000FFF) << 32 | \
-		(unsigned long)((write_h	) & 0x000007FF) << 44
+	_sd( \
+		(u64)((x			) & 0x00000FFF) <<  0 | \
+		(u64)((y			) & 0x000007FF) << 12 | \
+		(u64)((sample_r_h	) & 0x0000000F) << 23 | \
+		(u64)((sample_r_v	) & 0x00000003) << 27 | \
+		(u64)((write_w	) & 0x00000FFF) << 32 | \
+		(u64)((write_h	) & 0x000007FF) << 44, \
+		gs_p_extdata)
 
 #define GS_SET_EXTWRITE(write)\
-			*(volatile unsigned long *)gs_p_extwrite = \
-		(unsigned long)((write) & 0x00000001)
+	_sd( \
+		(u64)((write) & 0x00000001), \
+		gs_p_extwrite)
 
 #define GS_SET_BGCOLOR(r,g,b) \
-			*(volatile unsigned long *)gs_p_bgcolor =	\
-		(unsigned long)((r) & 0x000000FF) <<  0 | \
-		(unsigned long)((g) & 0x000000FF) <<  8 | \
-		(unsigned long)((b) & 0x000000FF) << 16
+	_sd( \
+		(u64)((r) & 0x000000FF) <<  0 | \
+		(u64)((g) & 0x000000FF) <<  8 | \
+		(u64)((b) & 0x000000FF) << 16, \
+		gs_p_bgcolor)
 
 #define GS_SET_CSR(signal_evnt,finish_evnt,hsync_intrupt,vsync_intrupt,write_terminate,flush,reset,nfield,current_field,fifo_status,gs_rev_number,gs_id) \
-			*(volatile unsigned long *)gs_p_csr =				\
-		(unsigned long)((signal_evnt	) & 0x00000001) <<  0 | \
-		(unsigned long)((finish_evnt	) & 0x00000001) <<  1 | \
-		(unsigned long)((hsync_intrupt	) & 0x00000001) <<  2 | \
-		(unsigned long)((vsync_intrupt	) & 0x00000001) <<  3 | \
-		(unsigned long)((write_terminate) & 0x00000001) <<  4 | \
-		(unsigned long)((flush			) & 0x00000001) <<  8 | \
-		(unsigned long)((reset			) & 0x00000001) <<  9 | \
-		(unsigned long)((nfield			) & 0x00000001) << 12 | \
-		(unsigned long)((current_field	) & 0x00000001) << 13 | \
-		(unsigned long)((fifo_status	) & 0x00000003) << 14 | \
-		(unsigned long)((gs_rev_number	) & 0x000000FF) << 16 | \
-		(unsigned long)((gs_id			) & 0x000000FF) << 24
+	_sd( \
+		(u64)((signal_evnt	) & 0x00000001) <<  0 | \
+		(u64)((finish_evnt	) & 0x00000001) <<  1 | \
+		(u64)((hsync_intrupt	) & 0x00000001) <<  2 | \
+		(u64)((vsync_intrupt	) & 0x00000001) <<  3 | \
+		(u64)((write_terminate) & 0x00000001) <<  4 | \
+		(u64)((flush			) & 0x00000001) <<  8 | \
+		(u64)((reset			) & 0x00000001) <<  9 | \
+		(u64)((nfield			) & 0x00000001) << 12 | \
+		(u64)((current_field	) & 0x00000001) << 13 | \
+		(u64)((fifo_status	) & 0x00000003) << 14 | \
+		(u64)((gs_rev_number	) & 0x000000FF) << 16 | \
+		(u64)((gs_id			) & 0x000000FF) << 24, \
+		gs_p_csr)
 
 #define GS_SET_IMR(signal_mask, finish_mask, hsync_mask, vsync_mask, write_mask, exhs_mask, exvs_mask) \
-			*(volatile unsigned long *)gs_p_imr =			\
-		(unsigned long)((signal_mask) & 0x00000001) <<  8 | \
-		(unsigned long)((finish_mask) & 0x00000001) <<  9 | \
-		(unsigned long)((hsync_mask	) & 0x00000001) << 10 | \
-		(unsigned long)((vsync_mask	) & 0x00000001) << 11 | \
-		(unsigned long)((write_mask	) & 0x00000001) << 12 | \
-		(unsigned long)((exhs_mask	) & 0x00000001) << 13 | \
-		(unsigned long)((exvs_mask	) & 0x00000001) << 14
+	_sd( \
+		(u64)((signal_mask) & 0x00000001) <<  8 | \
+		(u64)((finish_mask) & 0x00000001) <<  9 | \
+		(u64)((hsync_mask	) & 0x00000001) << 10 | \
+		(u64)((vsync_mask	) & 0x00000001) << 11 | \
+		(u64)((write_mask	) & 0x00000001) << 12 | \
+		(u64)((exhs_mask	) & 0x00000001) << 13 | \
+		(u64)((exvs_mask	) & 0x00000001) << 14, \
+		gs_p_imr)
 
 #define GS_SET_BUSDIR(direction) \
-			*(volatile unsigned long *)gs_p_busdir = \
-		(unsigned long)((direction) & 0x00000001)
+	_sd( \
+		(u64)((direction) & 0x00000001), \
+			gs_p_busdir)
 
 #define GS_SET_SIGLBLID(signal_id, label_id) \
-			*(volatile unsigned long *)gs_p_siglblid =	\
-		(unsigned long)((signal_id	) & 0xFFFFFFFF) <<  0 | \
-		(unsigned long)((label_id	) & 0xFFFFFFFF) << 32
+	_sd( \
+		(u64)((signal_id	) & 0xFFFFFFFF) <<  0 | \
+		(u64)((label_id	) & 0xFFFFFFFF) << 32, \
+		gs_p_siglblid)
 
 /*
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -1129,37 +1145,37 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 /*CSR */
 #define GS_GET_CSR_signal_evnt \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 0))
+			(_ld(gs_p_csr) & (0x00000001 << 0))
 
 #define GS_GET_CSR_finish_evnt \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 1))
+			(_ld(gs_p_csr) & (0x00000001 << 1))
 
 #define GS_GET_CSR_hsync_intrupt \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 2))
+			(_ld(gs_p_csr) & (0x00000001 << 2))
 
 #define GS_GET_CSR_vsync_intrupt \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 3))
+			(_ld(gs_p_csr) & (0x00000001 << 3))
 
 #define GS_GET_CSR_write_terminate \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 4))
+			(_ld(gs_p_csr) & (0x00000001 << 4))
 /*flush (w)*/
 
 /*reset (w)*/
 
 #define GS_GET_CSR_write_nfield \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 12))
+			(_ld(gs_p_csr) & (0x00000001 << 12))
 
 #define GS_GET_CSR_current_field \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000001 << 13))
+			(_ld(gs_p_csr) & (0x00000001 << 13))
 
 #define GS_GET_CSR_fifo_status \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x00000003 << 14))
+			(_ld(gs_p_csr) & (0x00000003 << 14))
 
 #define GS_GET_CSR_gs_rev_number \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x000000FF << 16))
+			(_ld(gs_p_csr) & (0x000000FF << 16))
 
 #define GS_GET_CSR_gs_id \
-			(*((volatile unsigned long *)(gs_p_csr)) & (0x000000FF << 24))
+			(_ld(gs_p_csr) & (0x000000FF << 24))
 
 /*--------------------------------------------------------
 --	'SET' GENERAL PURPOSE REG STRUCTS 'WITHOUT' REG		--
@@ -1677,27 +1693,27 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 /*SOURCE CHAIN TAG for DMA CHAIN MODE*/
 typedef struct _GS_GIF_DMACHAIN_TAG{
-	unsigned long	qwc	:16;
-	unsigned long	pad1	:10;
-	unsigned long	pce	:2;
-	unsigned long	id	:3;
-	unsigned long	irq	:1;
-	unsigned long	addr	:31;
-	unsigned long	spr	:1;
-	unsigned long	pad2	:64;
+	u64	qwc	:16;
+	u64	pad1	:10;
+	u64	pce	:2;
+	u64	id	:3;
+	u64	irq	:1;
+	u64	addr	:31;
+	u64	spr	:1;
+	u64	pad2	:64;
 }GS_GIF_DMACHAIN_TAG		__attribute__ ((aligned(16)));/*aligne 128bits*/
 
 /*GIFTAG*/
 typedef struct {
-	unsigned long nloop	:15;
-	unsigned long eop	:1;
-	unsigned long pad1	:16;
-	unsigned long id	:14;
-	unsigned long pre	:1;
-	unsigned long prim	:11;
-	unsigned long flg	:2;
-	unsigned long nreg	:4;
-	unsigned long reg	:64;
+	u64 nloop	:15;
+	u64 eop	:1;
+	u64 pad1	:16;
+	u64 id	:14;
+	u64 pre	:1;
+	u64 prim	:11;
+	u64 flg	:2;
+	u64 nreg	:4;
+	u64 reg	:64;
 }GS_GIF_TAG;
 
 #define gs_setGIF_TAG(p, _nloop,_eop,_id,_pre,_prim,_flg,_nreg,_reg)\
@@ -1723,15 +1739,15 @@ typedef struct {
 #define CRTC_SETTINGS_DEFAULT2		CRTC_SETTINGS_EN2|CRTC_SETTINGS_BLENDVAL|CRTC_SETTINGS_OUTRC1|CRTC_SETTINGS_STYLERC1
 
 /*setting*/
-#define CRTC_SETTINGS_EN1			((unsigned long)(1)<<0)				// Enable RC1(ReadCircuit 1)
-#define CRTC_SETTINGS_EN2			((unsigned long)(1)<<1)				// Enable RC2(ReadCircuit 1)
+#define CRTC_SETTINGS_EN1			((u64)(1)<<0)				// Enable RC1(ReadCircuit 1)
+#define CRTC_SETTINGS_EN2			((u64)(1)<<1)				// Enable RC2(ReadCircuit 1)
 #define CRTC_SETTINGS_ENBOTH		CRTC_SETTINGS_EN1|CRTC_SETTINGS_EN2	// Enable RC1 & R2
-#define CRTC_SETTINGS_BLENDRC1		((unsigned long)(0)<<5)				// Use Alpha value from rc1 for blending
-#define CRTC_SETTINGS_BLENDVAL		((unsigned long)(1)<<5)				// Use Alpha value from alpha_value of GsSetCRTCSettings() for blending
-#define CRTC_SETTINGS_OUTRC1		((unsigned long)(0)<<6)				// Output Final image to RC1
-#define CRTC_SETTINGS_OUTRC2		((unsigned long)(1)<<6)				// Output Final image to RC2
-#define CRTC_SETTINGS_STYLERC1		((unsigned long)(0)<<7)				// Blend With The Out Put of RC1
-#define CRTC_SETTINGS_STYLEBG		((unsigned long)(1)<<7)				// Blend With The Out Put of BG(background)
+#define CRTC_SETTINGS_BLENDRC1		((u64)(0)<<5)				// Use Alpha value from rc1 for blending
+#define CRTC_SETTINGS_BLENDVAL		((u64)(1)<<5)				// Use Alpha value from alpha_value of GsSetCRTCSettings() for blending
+#define CRTC_SETTINGS_OUTRC1		((u64)(0)<<6)				// Output Final image to RC1
+#define CRTC_SETTINGS_OUTRC2		((u64)(1)<<6)				// Output Final image to RC2
+#define CRTC_SETTINGS_STYLERC1		((u64)(0)<<7)				// Blend With The Out Put of RC1
+#define CRTC_SETTINGS_STYLEBG		((u64)(1)<<7)				// Blend With The Out Put of BG(background)
 
 typedef struct {
 	short	x;
@@ -2034,7 +2050,7 @@ typedef struct  {
 	unsigned short			irq	:1;
 	unsigned int			addr:31;
 	unsigned short			spr	:1;
-	unsigned long			pad2;
+	u64			pad2;
 }sDMA_CHAIN __attribute__((aligned(16)));;
 */
 
@@ -2069,7 +2085,7 @@ void GsSetFogColor(unsigned char r, unsigned char g, unsigned char b);
 ------------------------------------------------------*/
 
 int GsInit(short int interlace, short int videomode, short int ffmd);
-int GsSetCRTCSettings(unsigned long settings, unsigned char alpha_value);
+int GsSetCRTCSettings(u64 settings, unsigned char alpha_value);
 int GsSetVideoMode(short int interlace, short int videomode, short int ffmd);
 
 /* Initialise structs with defaults Based On Input*/

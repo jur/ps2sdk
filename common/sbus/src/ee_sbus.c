@@ -16,10 +16,10 @@ extern int __local_sbus_irq_handler(void);
 
 void SBUS_check_intr(void)
 {
-    if(*R_EE_I_STAT & EE_I_STAT_SBUS)
+    if(R_EE_I_STAT & EE_I_STAT_SBUS)
     {
         __local_sbus_irq_handler();
-        *R_EE_I_STAT |= EE_I_STAT_SBUS;
+        _sw(R_EE_I_STAT | EE_I_STAT_SBUS, A_EE_I_STAT);
     }
 }
 

@@ -51,12 +51,12 @@ $(EE_OBJS_DIR):
 	$(MKDIR) -p $(EE_OBJS_DIR)
 
 $(EE_BIN) : $(EE_OBJS) $(PS2SDKSRC)/ee/startup/obj/crt0.o
-	$(EE_CC) -mno-crt0 -T$(PS2SDKSRC)/ee/startup/src/linkfile $(EE_CFLAGS) \
+	$(EE_CC) -nostartfiles -T$(PS2SDKSRC)/ee/startup/src/linkfile $(EE_CFLAGS) \
 		-o $(EE_BIN) $(PS2SDKSRC)/ee/startup/obj/crt0.o $(EE_OBJS) $(EE_LDFLAGS) $(EE_LIBS)
 
 $(EE_LIB) : $(EE_OBJS) $(EE_LIB:%.a=%.erl)
 	$(EE_AR) cru $(EE_LIB) $(EE_OBJS)
 
 $(EE_LIB:%.a=%.erl) : $(EE_OBJS)
-	$(EE_CC) -mno-crt0 -Wl,-r -Wl,-d -o $(EE_LIB:%.a=%.erl) $(EE_OBJS)
+	$(EE_CC) -nostartfiles -Wl,-r -Wl,-d -o $(EE_LIB:%.a=%.erl) $(EE_OBJS)
 	$(EE_STRIP) --strip-unneeded -R .mdebug.eabi64 -R .reginfo -R .comment $(EE_LIB:%.a=%.erl)

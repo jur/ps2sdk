@@ -15,6 +15,7 @@
 #include <syscallnr.h>
 
 	.text
+	.set arch=r5900
 	.p2align 3
 
 #ifdef USE_KMODE
@@ -43,6 +44,37 @@ name:	j	__syscall;	\
 	.ent	name,0;		\
 name:	li	$3, __NR_##name;\
 	syscall;		\
+	jr	$31;		\
+	nop;			\
+	.end	name;		\
+	.size	name,.-name;	\
+	.set	pop;		
+
+#define SYSCALLO32(name) 	\
+	.set	push;		\
+	.set	noreorder;	\
+	.set	arch = r5900;	\
+	.text;			\
+	.align 4;		\
+	.globl	name;		\
+	.type	name,@function;	\
+	.ent	name,0;		\
+name:				\
+	/* Convert first */	\
+	/* Parameter from */	\
+	/* ABI o32 to 64 bit */	\
+	dsll32  $4,$4,0x0;	\
+	dsrl32  $4,$4,0x0;	\
+	dsll32  $5,$5,0x0;	\
+	or      $4,$4,$5;	\
+	li	$3, __NR_##name;\
+	syscall;		\
+	/* Convert 64 bit */	\
+	/* return value from */	\
+	/* 64 bit to ABI o32 */	\
+	dsrl32	$3, $2, 0;	\
+	dsll32  $2,$2,0x0;	\
+	dsrl32  $2,$2,0x0;	\
 	jr	$31;		\
 	nop;			\
 	.end	name;		\
@@ -541,15 +573,27 @@ SYSCALL(GetOsdConfigParam2)
 #endif
 
 #ifdef F_GsGetIMR
+#if _MIPS_SIM == _ABIO32
+SYSCALLO32(GsGetIMR)
+#else
 SYSCALL(GsGetIMR)
+#endif
 #endif
 
 #ifdef F_iGsGetIMR
+#if _MIPS_SIM == _ABIO32
+/* TBD: Missing conversion of return value from 64 bit to ABI o32. */
+#else
 SYSCALL(iGsGetIMR)
+#endif
 #endif
 
 #ifdef F_GsPutIMR
+#if _MIPS_SIM == _ABIO32
+SYSCALLO32(GsPutIMR)
+#else
 SYSCALL(GsPutIMR)
+#endif
 #endif
 
 #ifdef F_iGsPutIMR

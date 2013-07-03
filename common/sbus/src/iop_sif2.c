@@ -54,7 +54,7 @@ int SIF2_RestartDma(void)
     volatile register u32 d;
     int bc, bs;
 
-    if(!(*R_LOCAL_SBUS(PS2_SBUS_REG4) & 0x80)) { *R_LOCAL_SBUS(PS2_SBUS_REG4) = 0x80; }
+    if(!(R_LOCAL_SBUS(PS2_SBUS_REG4) & 0x80)) { W_LOCAL_SBUS(0x80, PS2_SBUS_REG4); }
 
     *R_IOP_D2_CHCR = 0;
     d = *R_IOP_D2_CHCR;

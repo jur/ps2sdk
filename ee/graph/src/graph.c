@@ -60,7 +60,7 @@ int graph_get_field(void)
 {
 
 	// Return the currently displayed field.
-	if (*GS_REG_CSR & (1 << 13))
+	if (_ld(GS_REG_CSR) & (1 << 13))
 	{
 
 		return GRAPH_FIELD_ODD;
@@ -75,24 +75,24 @@ void graph_wait_hsync(void)
 {
 
 	// Initiate hsync interrupt
-	*GS_REG_CSR |= *GS_REG_CSR & 4;
+	_sd(_ld(GS_REG_CSR & 4), GS_REG_CSR);
 
 	// Wait for hsync interrupt to be generated.
-	while (!(*GS_REG_CSR & 4));
+	while (!(_ld(GS_REG_CSR) & 4));
 
 }
 
 int graph_check_vsync(void)
 {
 
-	return (*GS_REG_CSR & 8);
+	return (_ld(GS_REG_CSR) & 8);
 
 }
 
 void graph_start_vsync(void)
 {
 
-	*GS_REG_CSR |= *GS_REG_CSR & 8;
+	_sd(_ld(GS_REG_CSR) & 8, GS_REG_CSR);
 
 }
 
@@ -100,9 +100,9 @@ void graph_wait_vsync(void)
 {
 
 	// Initiate vsync interrupt.
-	*GS_REG_CSR |= *GS_REG_CSR & 8;
+	_sd((_ld(GS_REG_CSR) & 8), GS_REG_CSR);
 
 	// Wait for vsync interrupt to be generated.
-	while (!(*GS_REG_CSR & 8));
+	while (!(_ld(GS_REG_CSR) & 8));
 
 }

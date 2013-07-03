@@ -115,12 +115,25 @@ iSifSendCmd( int command, void *send_data, int send_len,
 #ifdef F__sif_cmd_int_handler
 int _SifCmdIntHandler()
 {
-	u128 packet[8];
+#if _MIPS_SIM == _ABIN32
+	u128 packetbuf[8+1];
+	u128 *packet;
 	u128 *pktbuf;
+#else
+	u64 packetbuf[16+2];
+	u64 *packet;
+	u64 *pktbuf;
+#endif
+	unsigned int packet_aligned;
 	struct cmd_data *cmd_data = &_sif_cmd_data;
 	SifCmdHeader_t *header;
 	SifCmdHandlerData_t *cmd_handlers;
 	int size, pktquads, id, i = 0;
+
+	packet_aligned = (unsigned int) packetbuf;
+	packet_aligned += 16 - 1;
+	packet_aligned &= ~(16 - 1);
+	packet = (void *) packet_aligned;
 
 	EI();
 
@@ -130,10 +143,14 @@ int _SifCmdIntHandler()
 		goto out;
 
 	/* TODO: Don't copy anything extra */
+#if _MIPS_SIM == _ABIN32
 	pktquads = (size + 30) >> 4;
+#else
+	pktquads = (size + 30) >> 3;
+#endif
 	header->size = 0;
 	if (pktquads) {
-		pktbuf = (u128 *)cmd_data->pktbuf;
+		pktbuf = (void *)cmd_data->pktbuf;
 		while (pktquads--) {
 			packet[i] = pktbuf[i];
 			i++;
@@ -222,9 +239,12 @@ static void set_sreg(void *packet, void *harg)
 
 void SifInitCmd()
 {
-	u32 packet[5];	/* Implicitly aligned to 16 bytes */
+	unsigned char buffer[5 * 32 + DMA_ALIGN_SIZE];
+	u32 *packet;
 	int i;
 	static int _rb_count = 0;
+
+	packet = DMA_ALIGN(buffer);
 	if(_rb_count != _iop_reboot_count)
 	{
 	    _rb_count = _iop_reboot_count;

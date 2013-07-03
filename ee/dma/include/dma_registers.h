@@ -14,15 +14,15 @@
 
 #include <tamtypes.h>
 
-#define DMA_REG_CTRL		(volatile u32 *)0x1000E000	// DMA Control Register
-#define DMA_REG_STAT		(volatile u32 *)0x1000E010	// Interrupt Status Register
-#define DMA_REG_PCR			(volatile u32 *)0x1000E020	// Priority Control Register
-#define DMA_REG_SQWC		(volatile u32 *)0x1000E030	// Interleave Size Register
-#define DMA_REG_RBSR		(volatile u32 *)0x1000E040	// Ring Buffer Size Register
-#define DMA_REG_RBOR		(volatile u32 *)0x1000E050	// Ring Buffer Address Register
-#define DMA_REG_STADR		(volatile u32 *)0x1000E060	// Stall Address Register
-#define DMA_REG_ENABLER		(volatile u32 *)0x1000F520	// DMA Hold State Register
-#define DMA_REG_ENABLEW		(volatile u32 *)0x1000F590	// DMA Hold Control Register
+#define DMA_REG_CTRL		0x1000E000	// DMA Control Register
+#define DMA_REG_STAT		0x1000E010	// Interrupt Status Register
+#define DMA_REG_PCR		0x1000E020	// Priority Control Register
+#define DMA_REG_SQWC		0x1000E030	// Interleave Size Register
+#define DMA_REG_RBSR		0x1000E040	// Ring Buffer Size Register
+#define DMA_REG_RBOR		0x1000E050	// Ring Buffer Address Register
+#define DMA_REG_STADR		0x1000E060	// Stall Address Register
+#define DMA_REG_ENABLER		0x1000F520	// DMA Hold State Register
+#define DMA_REG_ENABLEW		0x1000F590	// DMA Hold Control Register
 
 // Enable DMA Controller
 #define DMAE_DISABLE 0

@@ -5,8 +5,8 @@
 #include "eedebug_defs.h"
 
 // the stacks for the Level 1 and Level 2 exception handlers.
-u128 __ee_ex_l1_stack[_EX_L1_STACK_SIZE / 16] __attribute__ ((aligned(128)));
-u128 __ee_ex_l2_stack[_EX_L2_STACK_SIZE / 16] __attribute__ ((aligned(128)));
+u8 __ee_ex_l1_stack[_EX_L1_STACK_SIZE] __attribute__ ((aligned(128)));
+u8 __ee_ex_l2_stack[_EX_L2_STACK_SIZE] __attribute__ ((aligned(128)));
 
 // the register frames used by the Level 1 and Level 2 exception handlers to store the register states.
 EE_RegFrame __ee_ex_l1_frame __attribute__ ((aligned(128)));

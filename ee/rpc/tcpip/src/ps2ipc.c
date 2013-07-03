@@ -368,8 +368,8 @@ int select(int maxfdp1, struct fd_set *readset, struct fd_set *writeset, struct 
 	_rpc_buffer[4] = (int)timeout;
 	if( timeout )
 	{
-		((long*)_rpc_buffer)[3] = timeout->tv_sec;
-		((long*)_rpc_buffer)[4] = timeout->tv_usec;
+		((long long*)_rpc_buffer)[3] = timeout->tv_sec; // TBD: Test for 32/64Bit
+		((long long*)_rpc_buffer)[4] = timeout->tv_usec; // TBD: Test for 32/64Bit
 	}
 	if( readset )
 	{
@@ -391,8 +391,8 @@ int select(int maxfdp1, struct fd_set *readset, struct fd_set *writeset, struct 
 
 	if( timeout )
 	{
-		timeout->tv_sec = ((long*)uncached_buf)[3];
-		timeout->tv_usec = ((long*)uncached_buf)[4];
+		timeout->tv_sec = ((long long*)uncached_buf)[3]; // TBD: Test for 32/64Bit
+		timeout->tv_usec = ((long long*)uncached_buf)[4]; // TBD: Test for 32/64Bit
 	}
 	if( readset )
 	{

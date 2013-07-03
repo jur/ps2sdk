@@ -195,8 +195,8 @@ qword_t *draw_finish(qword_t *q)
 void draw_wait_finish(void)
 {
 
-	while(!(*GS_REG_CSR & 2));
-	*GS_REG_CSR |= 2;
+	while(!(_ld(GS_REG_CSR) & 2));
+	_sd(_ld(GS_REG_CSR) | 2, GS_REG_CSR);
 
 }
 

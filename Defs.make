@@ -17,10 +17,10 @@
 # Definitions for the EE toolchain.
 #
 
-EE_TOOL_PREFIX = ee-
+EE_TOOL_PREFIX ?= mips64r5900el-ps2-elf-
 EE_CC = $(EE_TOOL_PREFIX)gcc
 EE_CXX = $(EE_TOOL_PREFIX)g++
-EE_AS = $(EE_TOOL_PREFIX)as
+EE_AS = $(EE_TOOL_PREFIX)gcc -c
 EE_LD = $(EE_TOOL_PREFIX)ld
 EE_AR = $(EE_TOOL_PREFIX)ar
 EE_OBJCOPY = $(EE_TOOL_PREFIX)objcopy

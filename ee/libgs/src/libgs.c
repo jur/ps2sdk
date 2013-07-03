@@ -238,9 +238,9 @@ int GsInit(short int interlace, short int videomode, short int ffmd)
 	return GsSetVideoMode(interlace, videomode,  ffmd);
 }
 
-int GsSetCRTCSettings(unsigned long settings, unsigned char alpha_value)
+int GsSetCRTCSettings(u64 settings, unsigned char alpha_value)
 {
-	*((volatile unsigned long *)(gs_p_pmode)) =  (settings|((unsigned long)(001) << 2)|((unsigned long)(alpha_value) 	<< 8));
+	_sd(settings|((u64)(001) << 2)|((u64)(alpha_value) 	<< 8), gs_p_pmode);
 
 	return 0;
 }
@@ -415,16 +415,16 @@ int GsClearDrawEnv2(GS_DRAWENV *drawenv)
 
 int GsPutDisplayEnv1(GS_DISPENV *dispenv)
 {
-	*((volatile unsigned long *)(gs_p_display1)) =  *(unsigned long *)(&dispenv->disp);
-	*((volatile unsigned long *)(gs_p_dispfb1)) =  *(unsigned long *)(&dispenv->dispfb);
+	_sd(*(u64 *)(&dispenv->disp), gs_p_display1);
+	_sd(*(u64 *)(&dispenv->dispfb), gs_p_dispfb1);
 
 	return 1;
 }
 
 int GsPutDisplayEnv2(GS_DISPENV *dispenv)
 {
-	*((volatile unsigned long *)(gs_p_display2)) =  *(unsigned long *)(&dispenv->disp);
-	*((volatile unsigned long *)(gs_p_dispfb2)) =  *(unsigned long *)(&dispenv->dispfb);
+	_sd(*(u64 *)(&dispenv->disp), gs_p_display2);
+	_sd(*(u64 *)(&dispenv->dispfb), gs_p_dispfb2);
 
 	return 1;
 }
@@ -812,7 +812,7 @@ int GsLoadImage(void *source_addr, GS_IMAGE *dest)
 		gs_dma_send((unsigned int *)source_addr,current);
 		gs_dma_wait();
 
-		(unsigned char *)source_addr += current*16;
+		source_addr += current*16;
 	}
 
 	//transfer the rest if we have left overs

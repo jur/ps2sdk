@@ -5,9 +5,9 @@
 # Copyright (c) 2006-2007 Eugene Plotnikov <e-plotnikov@operamail.com>
 # Licenced under Academic Free License version 2.0
 # Review ps2sdk README & LICENSE files for further details.
+
 .set noreorder
 .set nomacro
-.set noat
 
 .globl _MPEG_Initialize
 .globl _MPEG_Destroy
@@ -93,9 +93,12 @@ _MPEG_Initialize:
     lw      $v1, 0x2010($v0)
     bltz    $v1, 1b
     nop
+    .set push
+    .set noat
     lui     $at, 0x0080
     sw      $ra, 0($sp)
     or      $v1, $v1, $at
+    .set pop
     sw      $v1, 0x2010($v0)
     lui     $v0, 0x1001
     sw      $zero, -20448($v0)
@@ -142,58 +145,82 @@ _ipu_suspend:
 1:
     di
     sync.p
+    .set push
+    .set noat
     mfc0    $at, $12
     and     $at, $at, $v0
     bne     $at, $zero, 1b
+    .set pop
     lui     $v0, 0x0001
     lw      $a2, -2784($a1)
     nor     $v1, $v0, $zero
     or      $a2, $a2, $v0
     sw      $a2, -2672($a1)
+    .set push
+    .set noat
     lw      $at, -19456($a1)
     sra     $a3, $v1, 8
-    subu    $t1, $a1, $v0
+    subu    $9, $a1, $v0
     and     $at, $at, $a3
     sw      $at, -19456($a1)
     lw      $a2, -2784($a1)
     sw      $at, s_IPUState + 0
+    .set pop
     and     $a2, $a2, $v1
     sw      $a2, -2672($a1)
     ei
+    .set push
+    .set noat
     lw      $at, -19440($a1)
     lw      $a2, -19424($a1)
     sw      $at, s_IPUState + 4
+    .set pop
     sw      $a2, s_IPUState + 8
 1:
-    lw      $at, 0x2010($t1)
+    .set push
+    .set noat
+    lw      $at, 0x2010($9)
     andi    $at, $at, 0x00F0
     bne     $at, $zero, 1b
+    .set pop
     nop
 1:
     di
     sync.p
+    .set push
+    .set noat
     mfc0    $at, $12
     and     $at, $at, $v0
     bne     $at, $zero, 1b
+    .set pop
     nop
     lw      $a2, -2784($a1)
     or      $a2, $a2, $v0
     sw      $a2, -2672($a1)
+    .set push
+    .set noat
     lw      $at, -20480($a1)
     and     $at, $at, $a3
     sw      $at, -20480($a1)
     lw      $a2, -2784($a1)
     sw      $at, s_IPUState + 12
+    .set pop
     and     $a2, $a2, $v1
     sw      $a2, -2672($a1)
     ei
+    .set push
+    .set noat
     lw      $at, -20464($a1)
     lw      $a2, -20448($a1)
     sw      $at, s_IPUState + 16
+    .set pop
     sw      $a2, s_IPUState + 20
-    lw      $at, 0x2010($t1)
-    lw      $a2, 0x2020($t1)
+    .set push
+    .set noat
+    lw      $at, 0x2010($9)
+    lw      $a2, 0x2020($9)
     sw      $at, s_IPUState + 24
+    .set pop
     jr      $ra
     sw      $a2, s_IPUState + 28
 
@@ -234,6 +261,7 @@ _ipu_resume:
     or      $v1, $v1, $a2
     sw      $v0, 0x2010($a1)
     sw      $at, -19440($a0)
+    .set pop
     sw      $a3, -19424($a0)
     sw      $v1, -19456($a0)
 2:
@@ -249,29 +277,29 @@ _mpeg_dmac_handler:
     addiu   $a3, $zero, 1023
     addiu   $v1, $zero,  384
     pminw   $a3, $a3, $at
-    lui     $t1, 0x1001
+    lui     $9, 0x1001
     sll     $v0, $a3, 10
     mult    $v1, $v1, $a3
     subu    $at, $at, $a3
-    sw      $a2, -20464($t1)
-    sw      $a0, -19440($t1)
+    sw      $a2, -20464($9)
+    sw      $a0, -19440($9)
     addu    $a2, $a2, $v0
     srl     $v0, $v0, 4
     addu    $a0, $a0, $v1
     sw      $a0, 0($a1)
     srl     $v1, $v1, 4
     sw      $a2, 4($a1)
-    lui     $t0, 0x1000
+    lui     $8, 0x1000
     sw      $at, 8($a1)
-    sw      $v0, -20448($t1)
+    sw      $v0, -20448($9)
     lui     $v0, 0x7000
-    sw      $v1, -19424($t1)
+    sw      $v1, -19424($9)
     addiu   $v1, $zero, 0x0101
     or      $v0, $v0, $a3
-    sw      $v1, -19456($t1)
+    sw      $v1, -19456($9)
     andi    $v1, 0x0100
-    sw      $v0, 0x2000($t0)
-    sw      $v1, -20480($t1)
+    sw      $v0, 0x2000($8)
+    sw      $v1, -20480($9)
     jr      $ra
     nor     $v0, $zero, $zero
 1:
@@ -291,39 +319,39 @@ _MPEG_CSCImage:
     sw      $a1,  8($sp)
     bgezal  $zero, _ipu_suspend
     sw      $a2, 12($sp)
-    sw      $zero, 0x2000($t1)
-    addiu   $t0, $zero, 1023
+    sw      $zero, 0x2000($9)
+    addiu   $8, $zero, 1023
     addiu   $v0, $zero,    8
     addiu   $a0, $zero,    3
     addiu   $v1, $zero,   22
     lw      $a2, 12($sp)
-    addiu   $t3, $zero,  384
+    addiu   $11, $zero,  384
     sw      $v0, -8176($a1)
-    pminw   $t0, $t0, $a2
-    lw      $t4, 4($sp)
+    pminw   $8, $8, $a2
+    lw      $12, 4($sp)
     lw      $a3, 8($sp)
-    subu    $a2, $a2, $t0
-    mult    $t3, $t3, $t0
-    sll     $t5, $t0, 10
+    subu    $a2, $a2, $8
+    mult    $11, $11, $8
+    sll     $13, $8, 10
     sw      $a3, -20464($a1)
-    sw      $t4, -19440($a1)
+    sw      $12, -19440($a1)
     sw      $a2, s_CSCParam + 8
-    addu    $t4, $t4, $t3
-    addu    $a3, $a3, $t5
-    sw      $t4, s_CSCParam
-    srl     $t3, $t3, 4
+    addu    $12, $12, $11
+    addu    $a3, $a3, $13
+    sw      $12, s_CSCParam
+    srl     $11, $11, 4
     sw      $a3, s_CSCParam + 4
-    srl     $t5, $t5, 4
-    sw      $t3, -19424($a1)
-    sw      $t5, -20448($a1)
-    sw      $t0, 4($sp)
+    srl     $13, $13, 4
+    sw      $11, -19424($a1)
+    sw      $13, -20448($a1)
+    sw      $8, 4($sp)
     syscall
-    lw      $t0, 4($sp)
+    lw      $8, 4($sp)
     addiu   $v1, $zero, 0x0101
     lui     $at, 0x1001
     lui     $v0, 0x7000
     lui     $a0, 0x1000
-    or      $v0, $v0, $t0
+    or      $v0, $v0, $8
     sw      $v1, -19456($at)
     andi    $v1, $v1, 0x0100
     sw      $v0, 0x2000($a0)
@@ -531,7 +559,7 @@ _MPEG_SetDefQM:
     lq      $a1, 16($at)
     lq      $a2, 32($at)
     lq      $a3, 48($at)
-    lq      $t0, 64($at)
+    lq      $8, 64($at)
     lui     $v0, 0x5000
 1:
     lw      $at, 0x2010($v1)
@@ -547,10 +575,10 @@ _MPEG_SetDefQM:
     lw      $at, 0x2010($v1)
     bltz    $at, 1b
     nop
-    sq      $t0, 0x7010($v1)
-    sq      $t0, 0x7010($v1)
-    sq      $t0, 0x7010($v1)
-    sq      $t0, 0x7010($v1)
+    sq      $8, 0x7010($v1)
+    sq      $8, 0x7010($v1)
+    sq      $8, 0x7010($v1)
+    sq      $8, 0x7010($v1)
     sw      $v0, 0x2000($v1)
 1:
     lw      $at, 0x2010($v1)
@@ -754,16 +782,16 @@ _MPEG_BDEC:
     or      $s0, $s0, $a1
     lui     $a0, 0x8000
     or      $s0, $s0, $a2
-    sll     $t0, $t0, 4
+    sll     $8, $8, 4
     or      $s0, $s0, $a3
-    srl     $t0, $t0, 4
+    srl     $8, $8, 4
     lui     $a1, 0x1001
     lui     $at, 0x1000
-    or      $t0, $t0, $a0
+    or      $8, $8, $a0
     lw      $v1, 0x2010($at)
     addiu   $a0, $zero, 48
     addiu   $a2, $zero, 0x0100
-    sw      $t0, -20464($a1)
+    sw      $8, -20464($a1)
     sw      $a0, -20448($a1)
     sw      $a2, -20480($a1)
     bltzall $v1, _ipu_sync
@@ -805,9 +833,9 @@ _MPEG_WaitBDEC:
     addiu   $sp, $sp, 16
 3:
     bgezal  $zero, _ipu_suspend
-    lui     $t0, 0x4000
+    lui     $8, 0x4000
     bgezal  $zero, _ipu_resume
-    sw      $t0, 0x2010($t1)
+    sw      $8, 0x2010($9)
     lui     $v0, 0x0001
 4:
     di
@@ -836,40 +864,40 @@ _MPEG_put_block_fr:
     addiu   $v1, $zero, 6
     psrlh   $v0, $v0, 8
 1:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1;
-    lq      $t4,  64($a3)
-    lq      $t5,  80($a3)
-    lq      $t6,  96($a3)
-    lq      $t7, 112($a3)
+    lq      $12,  64($a3)
+    lq      $13,  80($a3)
+    lq      $14,  96($a3)
+    lq      $15, 112($a3)
     addiu   $a3, $a3, 128
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t0,  0($a2)
-    sq      $t2, 16($a2)
-    sq      $t4, 32($a2)
-    sq      $t6, 48($a2)
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $8,  0($a2)
+    sq      $10, 16($a2)
+    sq      $12, 32($a2)
+    sq      $14, 48($a2)
     bgtzl   $v1, 1b
     addiu   $a2, $a2, 64
     jr      $ra
@@ -881,78 +909,78 @@ _MPEG_put_block_fl:
     addiu   $v1, $zero, 4
     psrlh   $v0, $v0, 8
 1:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1
-    lq      $t4, 256($a3)
-    lq      $t5, 272($a3)
-    lq      $t6, 288($a3)
-    lq      $t7, 304($a3)
+    lq      $12, 256($a3)
+    lq      $13, 272($a3)
+    lq      $14, 288($a3)
+    lq      $15, 304($a3)
     addiu   $a3, $a3, 64
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t0,  0($a2)
-    sq      $t4, 16($a2)
-    sq      $t2, 32($a2)
-    sq      $t6, 48($a2)
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $8,  0($a2)
+    sq      $12, 16($a2)
+    sq      $10, 32($a2)
+    sq      $14, 48($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 64
     addiu   $v1, $v1, 2
 2:
-    lq      $t0, 256($a3)
-    lq      $t1, 272($a3)
-    lq      $t2, 288($a3)
-    lq      $t3, 304($a3)
+    lq      $8, 256($a3)
+    lq      $9, 272($a3)
+    lq      $10, 288($a3)
+    lq      $11, 304($a3)
     addiu   $v1, $v1, -1
-    lq      $t4, 320($a3)
-    lq      $t5, 336($a3)
-    lq      $t6, 352($a3)
-    lq      $t7, 368($a3)
+    lq      $12, 320($a3)
+    lq      $13, 336($a3)
+    lq      $14, 352($a3)
+    lq      $15, 368($a3)
     addiu   $a3, $a3, 128
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t0,  0($a2)
-    sq      $t2, 16($a2)
-    sq      $t4, 32($a2)
-    sq      $t6, 48($a2)
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $8,  0($a2)
+    sq      $10, 16($a2)
+    sq      $12, 32($a2)
+    sq      $14, 48($a2)
     bgtzl   $v1, 2b
     addiu   $a2, $a2, 64
     jr      $ra
@@ -966,41 +994,41 @@ _MPEG_put_block_il:
     psrlh   $v0, $v0, 8
     addu    $at, $at, $a2
 1:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1
-    lq      $t4, 256($a3)
-    lq      $t5, 272($a3)
-    lq      $t6, 288($a3)
-    lq      $t7, 304($a3)
+    lq      $12, 256($a3)
+    lq      $13, 272($a3)
+    lq      $14, 288($a3)
+    lq      $15, 304($a3)
     addiu   $a3, $a3, 64
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t0,  0($a2)
-    sq      $t2, 32($a2)
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $8,  0($a2)
+    sq      $10, 32($a2)
     addiu   $a2, $a2, 64
-    sq      $t4,  0($at)
-    sq      $t6, 32($at)
+    sq      $12,  0($at)
+    sq      $14, 32($at)
     bgtzl   $v1, 1b
     addiu   $at, $at, 64
     lw      $a2,  4($a0)
@@ -1008,48 +1036,48 @@ _MPEG_put_block_il:
     addiu   $v1, $zero, 2
     addu    $at, $at, $a2
 2:
-    lq      $t0, 256($a3)
-    lq      $t1, 272($a3)
-    lq      $t2, 288($a3)
-    lq      $t3, 304($a3)
+    lq      $8, 256($a3)
+    lq      $9, 272($a3)
+    lq      $10, 288($a3)
+    lq      $11, 304($a3)
     addiu   $v1, $v1, -1
-    lq      $t4, 320($a3)
-    lq      $t5, 336($a3)
-    lq      $t6, 352($a3)
-    lq      $t7, 368($a3)
+    lq      $12, 320($a3)
+    lq      $13, 336($a3)
+    lq      $14, 352($a3)
+    lq      $15, 368($a3)
     addiu   $a3, $a3, 128
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t0, $zero, $t0
-    ppacb   $t1, $zero, $t1
-    ppacb   $t2, $zero, $t2
-    ppacb   $t3, $zero, $t3
-    ppacb   $t4, $zero, $t4
-    ppacb   $t5, $zero, $t5
-    ppacb   $t6, $zero, $t6
-    ppacb   $t7, $zero, $t7
-    sd      $t0,  0($a2)
-    sd      $t1, 16($a2)
-    sd      $t2, 32($a2)
-    sd      $t3, 48($a2)
-    sd      $t4,  0($at)
-    sd      $t5, 16($at)
-    sd      $t6, 32($at)
-    sd      $t7, 48($at)
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $8, $zero, $8
+    ppacb   $9, $zero, $9
+    ppacb   $10, $zero, $10
+    ppacb   $11, $zero, $11
+    ppacb   $12, $zero, $12
+    ppacb   $13, $zero, $13
+    ppacb   $14, $zero, $14
+    ppacb   $15, $zero, $15
+    sd      $8,  0($a2)
+    sd      $9, 16($a2)
+    sd      $10, 32($a2)
+    sd      $11, 48($a2)
+    sd      $12,  0($at)
+    sd      $13, 16($at)
+    sd      $14, 32($at)
+    sd      $15, 48($at)
     addiu   $a2, $a2, 64
     bgtzl   $v1, 2b
     addiu   $at, $at, 64
@@ -1063,57 +1091,57 @@ _MPEG_add_block_frfr:
     addiu   $v1, $zero, 6
     psrlh   $v0, $v0, 8
 1:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1
-    lq      $t4,   0($a0)
-    lq      $t5,  16($a0)
-    lq      $t6,  32($a0)
-    lq      $t7,  48($a0)
-    paddh   $t0, $t0, $t4
-    paddh   $t1, $t1, $t5
-    paddh   $t2, $t2, $t6 
-    paddh   $t3, $t3, $t7
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    sq      $t0,  0($a2)
-    sq      $t2, 16($a2)
-    lq      $t4,  64($a3)
-    lq      $t5,  80($a3)
-    lq      $t6,  96($a3)
-    lq      $t7, 112($a3)
+    lq      $12,   0($a0)
+    lq      $13,  16($a0)
+    lq      $14,  32($a0)
+    lq      $15,  48($a0)
+    paddh   $8, $8, $12
+    paddh   $9, $9, $13
+    paddh   $10, $10, $14 
+    paddh   $11, $11, $15
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    sq      $8,  0($a2)
+    sq      $10, 16($a2)
+    lq      $12,  64($a3)
+    lq      $13,  80($a3)
+    lq      $14,  96($a3)
+    lq      $15, 112($a3)
     addiu   $a3, $a3, 128
-    lq      $t0,  64($a0)
-    lq      $t1,  80($a0)
-    lq      $t2,  96($a0)
-    lq      $t3, 112($a0)
+    lq      $8,  64($a0)
+    lq      $9,  80($a0)
+    lq      $10,  96($a0)
+    lq      $11, 112($a0)
     addiu   $a0, $a0, 128
-    paddh   $t4, $t4, $t0
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t7, $t7, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t4, 32($a2)
-    sq      $t6, 48($a2)
+    paddh   $12, $12, $8
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $15, $15, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $12, 32($a2)
+    sq      $14, 48($a2)
     bgtzl   $v1, 1b
     addiu   $a2, $a2, 64
     jr      $ra
@@ -1128,56 +1156,56 @@ _MPEG_add_block_ilfl:
     psrlh   $v0, $v0, 8
     addu    $at, $at, $a2
 1:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1
-    lq      $t4,   0($a1)
-    lq      $t5,  16($a1)
-    lq      $t6,  32($a1)
-    lq      $t7,  48($a1)
-    paddh   $t0, $t0, $t4
-    paddh   $t1, $t1, $t5
-    paddh   $t2, $t2, $t6
-    paddh   $t3, $t3, $t7
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    sq      $t0,   0($a2)
-    sq      $t2,  32($a2)
-    lq      $t4, 256($a3)
-    lq      $t5, 272($a3)
-    lq      $t6, 288($a3)
-    lq      $t7, 304($a3)
+    lq      $12,   0($a1)
+    lq      $13,  16($a1)
+    lq      $14,  32($a1)
+    lq      $15,  48($a1)
+    paddh   $8, $8, $12
+    paddh   $9, $9, $13
+    paddh   $10, $10, $14
+    paddh   $11, $11, $15
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    sq      $8,   0($a2)
+    sq      $10,  32($a2)
+    lq      $12, 256($a3)
+    lq      $13, 272($a3)
+    lq      $14, 288($a3)
+    lq      $15, 304($a3)
     addiu   $a3, $a3, 64
-    lq      $t0, 256($a1)
-    lq      $t1, 272($a1)
-    lq      $t2, 288($a1)
-    lq      $t3, 304($a1)
-    paddh   $t4, $t4, $t0
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t7, $t7, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t4,  0($at)
-    sq      $t6, 32($at)
+    lq      $8, 256($a1)
+    lq      $9, 272($a1)
+    lq      $10, 288($a1)
+    lq      $11, 304($a1)
+    paddh   $12, $12, $8
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $15, $15, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $12,  0($at)
+    sq      $14, 32($at)
     addiu   $at, $at, 64
     addiu   $a1, $a1, 64
     bgtzl   $v1, 1b
@@ -1187,64 +1215,64 @@ _MPEG_add_block_ilfl:
     addiu   $v1, $zero, 2
     addu    $at, $at, $a2
 2:
-    lq      $t0, 256($a3)
-    lq      $t1, 272($a3)
-    lq      $t2, 288($a3)
-    lq      $t3, 304($a3)
+    lq      $8, 256($a3)
+    lq      $9, 272($a3)
+    lq      $10, 288($a3)
+    lq      $11, 304($a3)
     addiu   $v1, $v1, -1
-    lq      $t4, 256($a1)
-    lq      $t5, 272($a1)
-    lq      $t6, 288($a1)
-    lq      $t7, 304($a1)
-    paddh   $t0, $t0, $t4
-    paddh   $t1, $t1, $t5
-    paddh   $t2, $t2, $t6
-    paddh   $t3, $t3, $t7
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    ppacb   $t0, $zero, $t0
-    ppacb   $t1, $zero, $t1
-    ppacb   $t2, $zero, $t2
-    ppacb   $t3, $zero, $t3
-    sd      $t0,  0($a2)
-    sd      $t1, 16($a2)
-    sd      $t2, 32($a2)
-    sd      $t3, 48($a2)
-    lq      $t4, 320($a3)
-    lq      $t5, 336($a3)
-    lq      $t6, 352($a3)
-    lq      $t7, 368($a3)
+    lq      $12, 256($a1)
+    lq      $13, 272($a1)
+    lq      $14, 288($a1)
+    lq      $15, 304($a1)
+    paddh   $8, $8, $12
+    paddh   $9, $9, $13
+    paddh   $10, $10, $14
+    paddh   $11, $11, $15
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    ppacb   $8, $zero, $8
+    ppacb   $9, $zero, $9
+    ppacb   $10, $zero, $10
+    ppacb   $11, $zero, $11
+    sd      $8,  0($a2)
+    sd      $9, 16($a2)
+    sd      $10, 32($a2)
+    sd      $11, 48($a2)
+    lq      $12, 320($a3)
+    lq      $13, 336($a3)
+    lq      $14, 352($a3)
+    lq      $15, 368($a3)
     addiu   $a3, $a3, 128
-    lq      $t0, 320($a1)
-    lq      $t1, 336($a1)
-    lq      $t2, 352($a1)
-    lq      $t3, 368($a1)
-    paddh   $t4, $t4, $t0
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t7, $t7, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t4, $zero, $t4
-    ppacb   $t5, $zero, $t5
-    ppacb   $t6, $zero, $t6
-    ppacb   $t7, $zero, $t7
-    sd      $t4,  0($at)
-    sd      $t5, 16($at)
-    sd      $t6, 32($at)
-    sd      $t7, 48($at)
+    lq      $8, 320($a1)
+    lq      $9, 336($a1)
+    lq      $10, 352($a1)
+    lq      $11, 368($a1)
+    paddh   $12, $12, $8
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $15, $15, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $12, $zero, $12
+    ppacb   $13, $zero, $13
+    ppacb   $14, $zero, $14
+    ppacb   $15, $zero, $15
+    sd      $12,  0($at)
+    sd      $13, 16($at)
+    sd      $14, 32($at)
+    sd      $15, 48($at)
     addiu   $a2, $a2, 64
     addiu   $at, $at, 64
     bgtzl   $v1, 2b
@@ -1259,112 +1287,112 @@ _MPEG_add_block_frfl:
     addiu   $v1, $zero, 4
     psrlh   $v0, $v0, 8
 1:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1
-    lq      $t4,   0($a1)
-    lq      $t5,  16($a1)
-    lq      $t6, 256($a1)
-    lq      $t7, 272($a1)
-    paddh   $t0, $t0, $t4
-    paddh   $t1, $t1, $t5
-    paddh   $t2, $t2, $t6
-    paddh   $t3, $t3, $t7
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    sq      $t0,   0($a2)
-    sq      $t2,  16($a2)
-    lq      $t4,  64($a3)
-    lq      $t5,  80($a3)
-    lq      $t6,  96($a3)
-    lq      $t7, 112($a3)
+    lq      $12,   0($a1)
+    lq      $13,  16($a1)
+    lq      $14, 256($a1)
+    lq      $15, 272($a1)
+    paddh   $8, $8, $12
+    paddh   $9, $9, $13
+    paddh   $10, $10, $14
+    paddh   $11, $11, $15
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    sq      $8,   0($a2)
+    sq      $10,  16($a2)
+    lq      $12,  64($a3)
+    lq      $13,  80($a3)
+    lq      $14,  96($a3)
+    lq      $15, 112($a3)
     addiu   $a3, $a3, 128
-    lq      $t0,  32($a1)
-    lq      $t1,  48($a1)
-    lq      $t2, 288($a1)
-    lq      $t3, 304($a1)
-    paddh   $t4, $t4, $t0
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t7, $t7, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t4, 32($a2)
-    sq      $t6, 48($a2)
+    lq      $8,  32($a1)
+    lq      $9,  48($a1)
+    lq      $10, 288($a1)
+    lq      $11, 304($a1)
+    paddh   $12, $12, $8
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $15, $15, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $12, 32($a2)
+    sq      $14, 48($a2)
     addiu   $a1, $a1, 64
     bgtzl   $v1, 1b
     addiu   $a2, $a2, 64
     lw      $a2, 4($a0)
     addiu   $v1, $zero, 2
 2:
-    lq      $t0,   0($a3)
-    lq      $t1,  16($a3)
-    lq      $t2,  32($a3)
-    lq      $t3,  48($a3)
+    lq      $8,   0($a3)
+    lq      $9,  16($a3)
+    lq      $10,  32($a3)
+    lq      $11,  48($a3)
     addiu   $v1, $v1, -1
-    lq      $t4, 256($a1)
-    lq      $t5, 320($a1)
-    lq      $t6, 272($a1)
-    lq      $t7, 336($a1)
-    paddh   $t0, $t0, $t4
-    paddh   $t1, $t1, $t5
-    paddh   $t2, $t2, $t6
-    paddh   $t3, $t3, $t7
-    pmaxh   $t0, $zero, $t0
-    pmaxh   $t1, $zero, $t1
-    pmaxh   $t2, $zero, $t2
-    pmaxh   $t3, $zero, $t3
-    pminh   $t0, $v0, $t0
-    pminh   $t1, $v0, $t1
-    pminh   $t2, $v0, $t2
-    pminh   $t3, $v0, $t3
-    ppacb   $t0, $t1, $t0
-    ppacb   $t2, $t3, $t2
-    sq      $t0,  0($a2)
-    sq      $t2, 16($a2)
-    lq      $t4,  64($a3)
-    lq      $t5,  80($a3)
-    lq      $t6,  96($a3)
-    lq      $t7, 112($a3)
+    lq      $12, 256($a1)
+    lq      $13, 320($a1)
+    lq      $14, 272($a1)
+    lq      $15, 336($a1)
+    paddh   $8, $8, $12
+    paddh   $9, $9, $13
+    paddh   $10, $10, $14
+    paddh   $11, $11, $15
+    pmaxh   $8, $zero, $8
+    pmaxh   $9, $zero, $9
+    pmaxh   $10, $zero, $10
+    pmaxh   $11, $zero, $11
+    pminh   $8, $v0, $8
+    pminh   $9, $v0, $9
+    pminh   $10, $v0, $10
+    pminh   $11, $v0, $11
+    ppacb   $8, $9, $8
+    ppacb   $10, $11, $10
+    sq      $8,  0($a2)
+    sq      $10, 16($a2)
+    lq      $12,  64($a3)
+    lq      $13,  80($a3)
+    lq      $14,  96($a3)
+    lq      $15, 112($a3)
     addiu   $a3, $a3, 128
-    lq      $t0, 288($a1)
-    lq      $t1, 352($a1)
-    lq      $t2, 304($a1)
-    lq      $t3, 368($a1)
-    paddh   $t4, $t4, $t0
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t7, $t7, $t3
-    pmaxh   $t4, $zero, $t4
-    pmaxh   $t5, $zero, $t5
-    pmaxh   $t6, $zero, $t6
-    pmaxh   $t7, $zero, $t7
-    pminh   $t4, $v0, $t4
-    pminh   $t5, $v0, $t5
-    pminh   $t6, $v0, $t6
-    pminh   $t7, $v0, $t7
-    ppacb   $t4, $t5, $t4
-    ppacb   $t6, $t7, $t6
-    sq      $t4, 32($a2)
-    sq      $t6, 48($a2)
+    lq      $8, 288($a1)
+    lq      $9, 352($a1)
+    lq      $10, 304($a1)
+    lq      $11, 368($a1)
+    paddh   $12, $12, $8
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $15, $15, $11
+    pmaxh   $12, $zero, $12
+    pmaxh   $13, $zero, $13
+    pmaxh   $14, $zero, $14
+    pmaxh   $15, $zero, $15
+    pminh   $12, $v0, $12
+    pminh   $13, $v0, $13
+    pminh   $14, $v0, $14
+    pminh   $15, $v0, $15
+    ppacb   $12, $13, $12
+    ppacb   $14, $15, $14
+    sq      $12, 32($a2)
+    sq      $14, 48($a2)
     addiu   $a2, $a2, 64
     bgtzl   $v1, 2b
     addiu   $a1, $a1, 128
@@ -1380,8 +1408,8 @@ _MPEG_dma_ref_image:
     lui     $v0, 0x1001
     mult    $a3, $a3, $at
     sll     $at, $a0, 4
-    lui     $t1, 0x2000
-    la      $t0, s_DMAPack
+    lui     $9, 0x2000
+    la      $8, s_DMAPack
 1:
     lw      $v1, -11264($v0)
     andi    $v1, $v1, 0x0100
@@ -1389,27 +1417,27 @@ _MPEG_dma_ref_image:
     nop
     srl     $at, $at, 4
     sw      $zero, -11232($v0)
-    or      $t1, $t1, $t0
+    or      $9, $9, $8
     sw      $at, -11136($v0)
     lui     $v1, 0x3000
-    sw      $t0, -11216($v0)
+    sw      $8, -11216($v0)
     ori     $v1, $v1, 0x0030
 1:
-    lw      $t0, 0($a1)
+    lw      $8, 0($a1)
     addiu   $a2, $a2, -1
-    sw      $v1,  0($t1)
-    sw      $t0,  4($t1)
-    addu    $t0, $t0, $a3
-    sw      $v1, 16($t1)
-    sw      $t0, 20($t1)
+    sw      $v1,  0($9)
+    sw      $8,  4($9)
+    addu    $8, $8, $a3
+    sw      $v1, 16($9)
+    sw      $8, 20($9)
     sw      $a0, 0($a1)
     addiu   $a1, $a1, 40
-    addiu   $t1, $t1, 32
+    addiu   $9, $9, 32
     bgtz    $a2, 1b
     addiu   $a0, $a0, 1536
     andi    $v1, $v1, 0xFFFF
     addiu   $at, $zero, 0x0105
-    sw      $v1, -16($t1)
+    sw      $v1, -16($9)
     sw      $zero, 32($a1)
     sync.l
     jr      $ra
@@ -1421,56 +1449,56 @@ _MPEG_do_mc:
     addiu   $sp, $sp, -16
     lw      $a2,  4($a0)
     lw      $a3, 12($a0)
-    lw      $t0, 16($a0)
-    lw      $t1, 20($a0)
-    lw      $t2, 24($a0)
-    lw      $t4, 28($a0)
-    subu    $t0, $t0, $t4
-    lw      $t5, 32($a0)
-    sll     $t4, $t4, 4
-    addu    $a1, $a1, $t4
-    subu    $v1, $v0, $t0
-    sllv    $t3, $v0, $t2
-    srlv    $v1, $v1, $t2
-    sll     $at, $t0, 4
+    lw      $8, 16($a0)
+    lw      $9, 20($a0)
+    lw      $10, 24($a0)
+    lw      $12, 28($a0)
+    subu    $8, $8, $12
+    lw      $13, 32($a0)
+    sll     $12, $12, 4
+    addu    $a1, $a1, $12
+    subu    $v1, $v0, $8
+    sllv    $11, $v0, $10
+    srlv    $v1, $v1, $10
+    sll     $at, $8, 4
     sw      $ra, 0($sp)
     addu    $a1, $a1, $at
-    jalr    $t5
-    subu    $at, $t1, $v1
+    jalr    $13
+    subu    $at, $9, $v1
     lw      $a1,  0($a0)
     lw      $a2,  8($a0)
-    lw      $t5, 36($a0)
+    lw      $13, 36($a0)
     addiu   $a1, $a1, 256
-    srl     $t4, $t4, 1
+    srl     $12, $12, 1
     srl     $a3, $a3, 1
-    srl     $t0, $t0, 1
-    srl     $t1, $t1, 1
+    srl     $8, $8, 1
+    srl     $9, $9, 1
     lw      $ra, 0($sp)
-    srlv    $t0, $t0, $t2
-    addu    $a1, $a1, $t4
+    srlv    $8, $8, $10
+    addu    $a1, $a1, $12
     addiu   $v0, $zero, 8
-    sllv    $t0, $t0, $t2
-    subu    $v1, $v0, $t0
-    sllv    $t3, $v0, $t2
-    srlv    $v1, $v1, $t2
-    sll     $at, $t0, 3
+    sllv    $8, $8, $10
+    subu    $v1, $v0, $8
+    sllv    $11, $v0, $10
+    srlv    $v1, $v1, $10
+    sll     $at, $8, 3
     addu    $a1, $a1, $at
-    subu    $at, $t1, $v1
-    jr      $t5
+    subu    $at, $9, $v1
+    jr      $13
     addiu   $sp, $sp, 16
 
 _MPEG_put_luma:
     mtsab   $a3, 0
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
-    addu    $a1, $a1, $t3
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t5, $t6, $t5
-    pextlb  $t6, $zero, $t5
-    pextub  $t5, $zero, $t5
-    sq      $t6,  0($a2)
-    sq      $t5, 16($a2)
+    qfsrv   $13, $14, $13
+    pextlb  $14, $zero, $13
+    pextub  $13, $zero, $13
+    sq      $14,  0($a2)
+    sq      $13, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
     addu    $v1, $zero, $at
@@ -1482,20 +1510,20 @@ _MPEG_put_luma:
 _MPEG_put_chroma:
     mtsab   $a3, 0
 1:
-    ld      $t5,   0($a1)
-    ld      $t6,  64($a1)
-    ld      $t7, 384($a1)
-    ld      $t8, 448($a1)
-    addu    $a1, $a1, $t3
+    ld      $13,   0($a1)
+    ld      $14,  64($a1)
+    ld      $15, 384($a1)
+    ld      $24, 448($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    pcpyld  $t5, $t7, $t5
-    pcpyld  $t6, $t8, $t6
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t6, $t6, $t6
-    pextlb  $t5, $zero, $t5
-    pextlb  $t6, $zero, $t6
-    sq      $t5,   0($a2)
-    sq      $t6, 128($a2)
+    pcpyld  $13, $15, $13
+    pcpyld  $14, $24, $14
+    qfsrv   $13, $13, $13
+    qfsrv   $14, $14, $14
+    pextlb  $13, $zero, $13
+    pextlb  $14, $zero, $14
+    sq      $13,   0($a2)
+    sq      $14, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
     addu    $v1, $zero, $at
@@ -1508,27 +1536,27 @@ _MPEG_put_luma_X:
     pnor    $v0, $zero, $zero
     psrlh   $v0, $v0, 15
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
     mtsab   $a3, 0
-    qfsrv   $t7, $t6, $t5
-    qfsrv   $t8, $t5, $t6
-    pextlb  $t5, $zero, $t7
-    pextub  $t6, $zero, $t7
-    addu    $a1, $a1, $t3
+    qfsrv   $15, $14, $13
+    qfsrv   $24, $13, $14
+    pextlb  $13, $zero, $15
+    pextub  $14, $zero, $15
+    addu    $a1, $a1, $11
     mtsab   $zero, 1
     addiu   $v1, $v1, -1
-    qfsrv   $t8, $t8, $t7
-    pextlb  $t7, $zero, $t8
-    pextub  $t8, $zero, $t8
-    paddh   $t5, $t5, $t7
-    paddh   $t6, $t6, $t8
-    paddh   $t5, $t5, $v0
-    paddh   $t6, $t6, $v0
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    sq      $t5,  0($a2)
-    sq      $t6, 16($a2)
+    qfsrv   $24, $24, $15
+    pextlb  $15, $zero, $24
+    pextub  $24, $zero, $24
+    paddh   $13, $13, $15
+    paddh   $14, $14, $24
+    paddh   $13, $13, $v0
+    paddh   $14, $14, $v0
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    sq      $13,  0($a2)
+    sq      $14, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
     addu    $v1, $zero, $at
@@ -1541,33 +1569,33 @@ _MPEG_put_chroma_X:
     pnor    $v0, $zero, $zero
     psrlh   $v0, $v0, 15
 1:
-    ld      $t5,   0($a1)
-    ld      $t6,  64($a1)
-    ld      $t7, 384($a1)
-    ld      $t8, 448($a1)
-    pcpyld  $t5, $t7, $t5
-    pcpyld  $t6, $t8, $t6
+    ld      $13,   0($a1)
+    ld      $14,  64($a1)
+    ld      $15, 384($a1)
+    ld      $24, 448($a1)
+    pcpyld  $13, $15, $13
+    pcpyld  $14, $24, $14
     mtsab   $a3, 0
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t6, $t6, $t6
-    addiu   $t9, $zero, 1
-    addu    $a1, $a1, $t3
+    qfsrv   $13, $13, $13
+    qfsrv   $14, $14, $14
+    addiu   $25, $zero, 1
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    mtsab   $t9, 0
-    qfsrv   $t1, $t5, $t5
-    qfsrv   $t2, $t6, $t6
-    pextlb  $t5, $zero, $t5
-    pextlb  $t6, $zero, $t6
-    pextlb  $t1, $zero, $t1
-    pextlb  $t2, $zero, $t2
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t5, $t5, $v0
-    paddh   $t6, $t6, $v0
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    sq      $t5,   0($a2)
-    sq      $t6, 128($a2)
+    mtsab   $25, 0
+    qfsrv   $9, $13, $13
+    qfsrv   $10, $14, $14
+    pextlb  $13, $zero, $13
+    pextlb  $14, $zero, $14
+    pextlb  $9, $zero, $9
+    pextlb  $10, $zero, $10
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $13, $13, $v0
+    paddh   $14, $14, $v0
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    sq      $13,   0($a2)
+    sq      $14, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
     addu    $v1, $zero, $at
@@ -1578,34 +1606,34 @@ _MPEG_put_chroma_X:
 
 _MPEG_put_luma_Y:
     mtsab   $a3, 0
-    lq      $t7,   0($a1)
-    lq      $t8, 384($a1)
-    addu    $a1, $a1, $t3
+    lq      $15,   0($a1)
+    lq      $24, 384($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t7, $t8, $t7
-    pextub  $t8, $zero, $t7
-    pextlb  $t7, $zero, $t7
+    qfsrv   $15, $24, $15
+    pextub  $24, $zero, $15
+    pextlb  $15, $zero, $15
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
-    addu    $a1, $a1, $t3
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t5, $t6, $t5
-    pextub  $t6, $zero, $t5
-    pextlb  $t5, $zero, $t5
-    paddh   $v0, $t6, $t8
-    pnor    $t8, $zero, $zero
-    paddh   $t9, $t5, $t7
-    psrlh   $t8, $t8, 15
-    por     $t7, $zero, $t5
-    paddh   $t9, $t9, $t8
-    paddh   $v0, $v0, $t8
-    por     $t8, $zero, $t6
-    psrlh   $t9, $t9, 1
+    qfsrv   $13, $14, $13
+    pextub  $14, $zero, $13
+    pextlb  $13, $zero, $13
+    paddh   $v0, $14, $24
+    pnor    $24, $zero, $zero
+    paddh   $25, $13, $15
+    psrlh   $24, $24, 15
+    por     $15, $zero, $13
+    paddh   $25, $25, $24
+    paddh   $v0, $v0, $24
+    por     $24, $zero, $14
+    psrlh   $25, $25, 1
     psrlh   $v0, $v0, 1
-    sq      $t9,  0($a2)
+    sq      $25,  0($a2)
     sq      $v0, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
@@ -1620,14 +1648,14 @@ _MPEG_put_chroma_Y:
     mtsab   $a3, 0
     ld      $a0,   0($a1)
     ld      $a3,  64($a1)
-    ld      $t0, 384($a1)
-    ld      $t1, 448($a1)
+    ld      $8, 384($a1)
+    ld      $9, 448($a1)
     pnor    $v0, $zero, $zero
-    addu    $a1, $a1, $t3
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
     psrlh   $v0, $v0, 15
-    pcpyld  $a0, $t0, $a0
-    pcpyld  $a3, $t1, $a3
+    pcpyld  $a0, $8, $a0
+    pcpyld  $a3, $9, $a3
     qfsrv   $a0, $a0, $a0
     qfsrv   $a3, $a3, $a3
     pextlb  $a0, $zero, $a0
@@ -1635,28 +1663,28 @@ _MPEG_put_chroma_Y:
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    ld      $t5,   0($a1)
-    ld      $t6,  64($a1)
-    ld      $t7, 384($a1)
-    ld      $t8, 448($a1)
-    addu    $a1, $a1, $t3
+    ld      $13,   0($a1)
+    ld      $14,  64($a1)
+    ld      $15, 384($a1)
+    ld      $24, 448($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    pcpyld  $t5, $t7, $t5
-    pcpyld  $t6, $t8, $t6
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t6, $t6, $t6
-    pextlb  $t5, $zero, $t5
-    pextlb  $t6, $zero, $t6
-    paddh   $t1, $t5, $a0
-    paddh   $t2, $t6, $a3
-    por     $a0, $zero, $t5
-    por     $a3, $zero, $t6
-    paddh   $t1, $t1, $v0
-    paddh   $t2, $t2, $v0
-    psrlh   $t1, $t1, 1
-    psrlh   $t2, $t2, 1
-    sq      $t1,   0($a2)
-    sq      $t2, 128($a2)
+    pcpyld  $13, $15, $13
+    pcpyld  $14, $24, $14
+    qfsrv   $13, $13, $13
+    qfsrv   $14, $14, $14
+    pextlb  $13, $zero, $13
+    pextlb  $14, $zero, $14
+    paddh   $9, $13, $a0
+    paddh   $10, $14, $a3
+    por     $a0, $zero, $13
+    por     $a3, $zero, $14
+    paddh   $9, $9, $v0
+    paddh   $10, $10, $v0
+    psrlh   $9, $9, 1
+    psrlh   $10, $10, 1
+    sq      $9,   0($a2)
+    sq      $10, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
 2:
@@ -1669,50 +1697,50 @@ _MPEG_put_chroma_Y:
 _MPEG_put_luma_XY:
     mtsab   $a3, 0
     lq      $v0,   0($a1)
-    lq      $t7, 384($a1)
-    addu    $a1, $a1, $t3
-    qfsrv   $t8, $t7, $v0
-    qfsrv   $t9, $v0, $t7
+    lq      $15, 384($a1)
+    addu    $a1, $a1, $11
+    qfsrv   $24, $15, $v0
+    qfsrv   $25, $v0, $15
     addiu   $v1, $v1, -1
-    pextlb  $v0, $zero, $t8
-    pextub  $t7, $zero, $t8
+    pextlb  $v0, $zero, $24
+    pextub  $15, $zero, $24
     mtsab   $zero, 1
-    qfsrv   $t9, $t9, $t8
-    pextlb  $t8, $zero, $t9
-    pextub  $t9, $zero, $t9
-    paddh   $v0, $v0, $t8
-    paddh   $t7, $t7, $t9
+    qfsrv   $25, $25, $24
+    pextlb  $24, $zero, $25
+    pextub  $25, $zero, $25
+    paddh   $v0, $v0, $24
+    paddh   $15, $15, $25
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
     mtsab   $a3, 0
-    addu    $a1, $a1, $t3
-    qfsrv   $t8, $t6, $t5
-    qfsrv   $t9, $t5, $t6
+    addu    $a1, $a1, $11
+    qfsrv   $24, $14, $13
+    qfsrv   $25, $13, $14
     addiu   $v1, $v1, -1
-    pextlb  $t5, $zero, $t8
-    pextub  $t6, $zero, $t8
+    pextlb  $13, $zero, $24
+    pextub  $14, $zero, $24
     mtsab   $zero, 1
-    qfsrv   $t9, $t9, $t8
-    pextlb  $t8, $zero, $t9
-    pextub  $t9, $zero, $t9
-    paddh   $t5, $t5, $t8
-    paddh   $t6, $t6, $t9
-    paddh   $t8, $v0, $t5
-    paddh   $t9, $t7, $t6
-    por     $v0, $zero, $t5
-    pnor    $t5, $zero, $zero
-    por     $t7, $zero, $t6
-    psrlh   $t5, $t5, 15
-    psllh   $t5, $t5,  1
-    paddh   $t8, $t8, $t5
-    paddh   $t9, $t9, $t5
-    psrlh   $t8, $t8, 2
-    psrlh   $t9, $t9, 2
-    sq      $t8,  0($a2)
-    sq      $t9, 16($a2)
+    qfsrv   $25, $25, $24
+    pextlb  $24, $zero, $25
+    pextub  $25, $zero, $25
+    paddh   $13, $13, $24
+    paddh   $14, $14, $25
+    paddh   $24, $v0, $13
+    paddh   $25, $15, $14
+    por     $v0, $zero, $13
+    pnor    $13, $zero, $zero
+    por     $15, $zero, $14
+    psrlh   $13, $13, 15
+    psllh   $13, $13,  1
+    paddh   $24, $24, $13
+    paddh   $25, $25, $13
+    psrlh   $24, $24, 2
+    psrlh   $25, $25, 2
+    sq      $24,  0($a2)
+    sq      $25, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
 2:
@@ -1724,62 +1752,62 @@ _MPEG_put_luma_XY:
 
 _MPEG_put_chroma_XY:
     mtsab   $a3, 0
-    pnor    $t9, $zero, $zero
+    pnor    $25, $zero, $zero
     ld      $a0,   0($a1)
     ld      $v0,  64($a1)
     mtsab   $zero, 1
-    ld      $t0, 384($a1)
-    ld      $t1, 448($a1)
-    pcpyld  $a0, $t0, $a0
-    pcpyld  $v0, $t1, $v0
+    ld      $8, 384($a1)
+    ld      $9, 448($a1)
+    pcpyld  $a0, $8, $a0
+    pcpyld  $v0, $9, $v0
     qfsrv   $a0, $a0, $a0
     qfsrv   $v0, $v0, $v0
-    psrlh   $t9, $t9, 15
-    psllh   $t9, $t9, 1
-    addu    $a1, $a1, $t3
+    psrlh   $25, $25, 15
+    psllh   $25, $25, 1
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t0, $a0, $a0
-    qfsrv   $t1, $v0, $v0
+    qfsrv   $8, $a0, $a0
+    qfsrv   $9, $v0, $v0
     pextlb  $a0, $zero, $a0
     pextlb  $v0, $zero, $v0
-    pextlb  $t0, $zero, $t0
-    pextlb  $t1, $zero, $t1
-    paddh   $a0, $a0, $t0
-    paddh   $t0, $v0, $t1
+    pextlb  $8, $zero, $8
+    pextlb  $9, $zero, $9
+    paddh   $a0, $a0, $8
+    paddh   $8, $v0, $9
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    ld      $t5,   0($a1)
-    ld      $t7,  64($a1)
+    ld      $13,   0($a1)
+    ld      $15,  64($a1)
     mtsab   $a3, 0
-    ld      $t6, 384($a1)
-    ld      $t8, 448($a1)
-    pcpyld  $t5, $t6, $t5
-    pcpyld  $t7, $t8, $t7
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t7, $t7, $t7
+    ld      $14, 384($a1)
+    ld      $24, 448($a1)
+    pcpyld  $13, $14, $13
+    pcpyld  $15, $24, $15
+    qfsrv   $13, $13, $13
+    qfsrv   $15, $15, $15
     addiu   $v0, $zero, 1
-    addu    $a1, $a1, $t3
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
     mtsab   $v0, 0
-    qfsrv   $t6, $t5, $t5
-    qfsrv   $t8, $t7, $t7
-    pextlb  $t5, $zero, $t5
-    pextlb  $t7, $zero, $t7
-    pextlb  $t6, $zero, $t6
-    pextlb  $t8, $zero, $t8
-    paddh   $t5, $t5, $t6
-    paddh   $t6, $t7, $t8
-    paddh   $t7, $a0, $t5
-    paddh   $t8, $t0, $t6
-    por     $a0, $zero, $t5
-    por     $t0, $zero, $t6
-    paddh   $t7, $t7, $t9
-    paddh   $t8, $t8, $t9
-    psrlh   $t7, $t7, 2
-    psrlh   $t8, $t8, 2
-    sq      $t7,   0($a2)
-    sq      $t8, 128($a2)
+    qfsrv   $14, $13, $13
+    qfsrv   $24, $15, $15
+    pextlb  $13, $zero, $13
+    pextlb  $15, $zero, $15
+    pextlb  $14, $zero, $14
+    pextlb  $24, $zero, $24
+    paddh   $13, $13, $14
+    paddh   $14, $15, $24
+    paddh   $15, $a0, $13
+    paddh   $24, $8, $14
+    por     $a0, $zero, $13
+    por     $8, $zero, $14
+    paddh   $15, $15, $25
+    paddh   $24, $24, $25
+    psrlh   $15, $15, 2
+    psrlh   $24, $24, 2
+    sq      $15,   0($a2)
+    sq      $24, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
 2:
@@ -1792,33 +1820,33 @@ _MPEG_put_chroma_XY:
 _MPEG_avg_luma:
     mtsab   $a3, 0
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
-    addu    $a1, $a1, $t3
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t5, $t6, $t5
-    pextlb  $t6, $zero, $t5
-    pextub  $t5, $zero, $t5
-    lq      $t8,  0($a2)
-    lq      $t9, 16($a2)
-    paddh   $t6, $t6, $t8
-    paddh   $t5, $t5, $t9
-    pcgth   $t8, $t6, $zero
-    pcgth   $t9, $t5, $zero
-    pceqh   $v0, $t6, $zero
-    pceqh   $t7, $t5, $zero
-    psrlh   $t8, $t8, 15
-    psrlh   $t9, $t9, 15
+    qfsrv   $13, $14, $13
+    pextlb  $14, $zero, $13
+    pextub  $13, $zero, $13
+    lq      $24,  0($a2)
+    lq      $25, 16($a2)
+    paddh   $14, $14, $24
+    paddh   $13, $13, $25
+    pcgth   $24, $14, $zero
+    pcgth   $25, $13, $zero
+    pceqh   $v0, $14, $zero
+    pceqh   $15, $13, $zero
+    psrlh   $24, $24, 15
+    psrlh   $25, $25, 15
     psrlh   $v0, $v0, 15
-    psrlh   $t7, $t7, 15
-    por     $t8, $t8, $v0
-    por     $t9, $t9, $t7
-    paddh   $t6, $t6, $t8
-    paddh   $t5, $t5, $t9
-    psrlh   $t6, $t6, 1
-    psrlh   $t5, $t5, 1
-    sq      $t6,  0($a2)
-    sq      $t5, 16($a2)
+    psrlh   $15, $15, 15
+    por     $24, $24, $v0
+    por     $25, $25, $15
+    paddh   $14, $14, $24
+    paddh   $13, $13, $25
+    psrlh   $14, $14, 1
+    psrlh   $13, $13, 1
+    sq      $14,  0($a2)
+    sq      $13, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
     addu    $v1, $zero, $at
@@ -1830,38 +1858,38 @@ _MPEG_avg_luma:
 _MPEG_avg_chroma:
     mtsab   $a3, 0
 1:
-    ld      $t5,   0($a1)
-    ld      $t6,  64($a1)
+    ld      $13,   0($a1)
+    ld      $14,  64($a1)
     addiu   $v1, $v1, -1
-    ld      $t7, 384($a1)
-    ld      $t8, 448($a1)
-    addu    $a1, $a1, $t3
-    pcpyld  $t5, $t7, $t5
-    pcpyld  $t6, $t8, $t6
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t6, $t6, $t6
-    pextlb  $t5, $zero, $t5
-    pextlb  $t6, $zero, $t6
-    lq      $t0,   0($a2)
-    lq      $t1, 128($a2)
-    paddh   $t5, $t5, $t0
-    paddh   $t6, $t6, $t1
-    pcgth   $t0, $t5, $zero
-    pcgth   $t1, $t6, $zero
-    pceqh   $v0, $t5, $zero
-    pceqh   $t9, $t6, $zero
-    psrlh   $t0, $t0, 15
-    psrlh   $t1, $t1, 15
+    ld      $15, 384($a1)
+    ld      $24, 448($a1)
+    addu    $a1, $a1, $11
+    pcpyld  $13, $15, $13
+    pcpyld  $14, $24, $14
+    qfsrv   $13, $13, $13
+    qfsrv   $14, $14, $14
+    pextlb  $13, $zero, $13
+    pextlb  $14, $zero, $14
+    lq      $8,   0($a2)
+    lq      $9, 128($a2)
+    paddh   $13, $13, $8
+    paddh   $14, $14, $9
+    pcgth   $8, $13, $zero
+    pcgth   $9, $14, $zero
+    pceqh   $v0, $13, $zero
+    pceqh   $25, $14, $zero
+    psrlh   $8, $8, 15
+    psrlh   $9, $9, 15
     psrlh   $v0, $v0, 15
-    psrlh   $t9, $t9, 15
-    por     $t0, $t0, $v0
-    por     $t1, $t1, $t9
-    paddh   $t5, $t5, $t0
-    paddh   $t6, $t6, $t1
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    sq      $t5,   0($a2)
-    sq      $t6, 128($a2)
+    psrlh   $25, $25, 15
+    por     $8, $8, $v0
+    por     $9, $9, $25
+    paddh   $13, $13, $8
+    paddh   $14, $14, $9
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    sq      $13,   0($a2)
+    sq      $14, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
     addu    $v1, $zero, $at
@@ -1874,45 +1902,45 @@ _MPEG_avg_luma_X:
     pnor    $v0, $zero, $zero
     psrlh   $v0, $v0, 15
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
     mtsab   $a3, 0
-    qfsrv   $t7, $t6, $t5
-    qfsrv   $t8, $t5, $t6
-    pextlb  $t5, $zero, $t7
-    pextub  $t6, $zero, $t7
-    addu    $a1, $a1, $t3
+    qfsrv   $15, $14, $13
+    qfsrv   $24, $13, $14
+    pextlb  $13, $zero, $15
+    pextub  $14, $zero, $15
+    addu    $a1, $a1, $11
     mtsab   $zero, 1
     addiu   $v1, $v1, -1
-    qfsrv   $t8, $t8, $t7
-    pextlb  $t7, $zero, $t8
-    pextub  $t8, $zero, $t8
-    paddh   $t5, $t5, $t7
-    paddh   $t6, $t6, $t8
-    paddh   $t5, $t5, $v0
-    paddh   $t6, $t6, $v0
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    lq      $t8,  0($a2)
-    lq      $t9, 16($a2)
-    paddh   $t5, $t5, $t8
-    paddh   $t6, $t6, $t9
-    pcgth   $t8, $t5, $zero
-    pceqh   $t9, $t5, $zero
-    psrlh   $t8, $t8, 15
-    psrlh   $t9, $t9, 15
-    por     $t8, $t8, $t9
-    paddh   $t5, $t5, $t8
-    pcgth   $t8, $t6, $zero
-    pceqh   $t9, $t6, $zero
-    psrlh   $t8, $t8, 15
-    psrlh   $t9, $t9, 15
-    por     $t8, $t8, $t9
-    paddh   $t6, $t6, $t8
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    sq      $t5,  0($a2)
-    sq      $t6, 16($a2)
+    qfsrv   $24, $24, $15
+    pextlb  $15, $zero, $24
+    pextub  $24, $zero, $24
+    paddh   $13, $13, $15
+    paddh   $14, $14, $24
+    paddh   $13, $13, $v0
+    paddh   $14, $14, $v0
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    lq      $24,  0($a2)
+    lq      $25, 16($a2)
+    paddh   $13, $13, $24
+    paddh   $14, $14, $25
+    pcgth   $24, $13, $zero
+    pceqh   $25, $13, $zero
+    psrlh   $24, $24, 15
+    psrlh   $25, $25, 15
+    por     $24, $24, $25
+    paddh   $13, $13, $24
+    pcgth   $24, $14, $zero
+    pceqh   $25, $14, $zero
+    psrlh   $24, $24, 15
+    psrlh   $25, $25, 15
+    por     $24, $24, $25
+    paddh   $14, $14, $24
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    sq      $13,  0($a2)
+    sq      $14, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
     addu    $v1, $zero, $at
@@ -1925,51 +1953,51 @@ _MPEG_avg_chroma_X:
     pnor    $v0, $zero, $zero
     psrlh   $v0, $v0, 15
 1:
-    ld      $t5,   0($a1)
-    ld      $t6,  64($a1)
+    ld      $13,   0($a1)
+    ld      $14,  64($a1)
     mtsab   $a3, 0
-    ld      $t7, 384($a1)
-    ld      $t8, 448($a1)
-    pcpyld  $t5, $t7, $t5
-    pcpyld  $t6, $t8, $t6
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t6, $t6, $t6
-    addiu   $t9, $zero, 1
-    addu    $a1, $a1, $t3
+    ld      $15, 384($a1)
+    ld      $24, 448($a1)
+    pcpyld  $13, $15, $13
+    pcpyld  $14, $24, $14
+    qfsrv   $13, $13, $13
+    qfsrv   $14, $14, $14
+    addiu   $25, $zero, 1
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    mtsab   $t9, 0
-    qfsrv   $t1, $t5, $t5
-    qfsrv   $t2, $t6, $t6
-    pextlb  $t5, $zero, $t5
-    pextlb  $t6, $zero, $t6
-    pextlb  $t1, $zero, $t1
-    pextlb  $t2, $zero, $t2
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    paddh   $t5, $t5, $v0
-    paddh   $t6, $t6, $v0
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    lq      $t1,   0($a2)
-    lq      $t2, 128($a2)
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    pcgth   $t1, $t5, $zero
-    pcgth   $t2, $t6, $zero
-    pceqh   $t9, $t5, $zero
-    pceqh   $a0, $t6, $zero
-    psrlh   $t1, $t1, 15
-    psrlh   $t2, $t2, 15
-    psrlh   $t9, $t9, 15
+    mtsab   $25, 0
+    qfsrv   $9, $13, $13
+    qfsrv   $10, $14, $14
+    pextlb  $13, $zero, $13
+    pextlb  $14, $zero, $14
+    pextlb  $9, $zero, $9
+    pextlb  $10, $zero, $10
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    paddh   $13, $13, $v0
+    paddh   $14, $14, $v0
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    lq      $9,   0($a2)
+    lq      $10, 128($a2)
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    pcgth   $9, $13, $zero
+    pcgth   $10, $14, $zero
+    pceqh   $25, $13, $zero
+    pceqh   $a0, $14, $zero
+    psrlh   $9, $9, 15
+    psrlh   $10, $10, 15
+    psrlh   $25, $25, 15
     psrlh   $a0, $a0, 15
-    por     $t1, $t1, $t9
-    por     $t2, $t2, $a0
-    paddh   $t5, $t5, $t1
-    paddh   $t6, $t6, $t2
-    psrlh   $t5, $t5, 1
-    psrlh   $t6, $t6, 1
-    sq      $t5,   0($a2)
-    sq      $t6, 128($a2)
+    por     $9, $9, $25
+    por     $10, $10, $a0
+    paddh   $13, $13, $9
+    paddh   $14, $14, $10
+    psrlh   $13, $13, 1
+    psrlh   $14, $14, 1
+    sq      $13,   0($a2)
+    sq      $14, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
     addu    $v1, $zero, $at
@@ -1980,52 +2008,52 @@ _MPEG_avg_chroma_X:
 
 _MPEG_avg_luma_Y:
     mtsab   $a3, 0
-    lq      $t7,   0($a1)
-    lq      $t8, 384($a1)
-    addu    $a1, $a1, $t3
+    lq      $15,   0($a1)
+    lq      $24, 384($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t7, $t8, $t7
-    pextub  $t8, $zero, $t7
-    pextlb  $t7, $zero, $t7
+    qfsrv   $15, $24, $15
+    pextub  $24, $zero, $15
+    pextlb  $15, $zero, $15
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
-    addu    $a1, $a1, $t3
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t5, $t6, $t5
-    pextub  $t6, $zero, $t5
-    pextlb  $t5, $zero, $t5
-    paddh   $v0, $t6, $t8
-    pnor    $t8, $zero, $zero
-    paddh   $t9, $t5, $t7
-    psrlh   $t8, $t8, 15
-    por     $t7, $zero, $t5
-    paddh   $t9, $t9, $t8
-    paddh   $v0, $v0, $t8
-    por     $t8, $zero, $t6
-    psrlh   $t9, $t9, 1
+    qfsrv   $13, $14, $13
+    pextub  $14, $zero, $13
+    pextlb  $13, $zero, $13
+    paddh   $v0, $14, $24
+    pnor    $24, $zero, $zero
+    paddh   $25, $13, $15
+    psrlh   $24, $24, 15
+    por     $15, $zero, $13
+    paddh   $25, $25, $24
+    paddh   $v0, $v0, $24
+    por     $24, $zero, $14
+    psrlh   $25, $25, 1
     psrlh   $v0, $v0, 1
-    lq      $t5,  0($a2)
-    lq      $t6, 16($a2)
-    paddh   $t9, $t9, $t5
-    paddh   $v0, $v0, $t6
-    pcgth   $t5, $t9, $zero
-    pceqh   $t6, $t9, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t9, $t9, $t5
-    pcgth   $t5, $v0, $zero
-    pceqh   $t6, $v0, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $v0, $v0, $t5
-    psrlh   $t9, $t9, 1
+    lq      $13,  0($a2)
+    lq      $14, 16($a2)
+    paddh   $25, $25, $13
+    paddh   $v0, $v0, $14
+    pcgth   $13, $25, $zero
+    pceqh   $14, $25, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $25, $25, $13
+    pcgth   $13, $v0, $zero
+    pceqh   $14, $v0, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $v0, $v0, $13
+    psrlh   $25, $25, 1
     psrlh   $v0, $v0, 1
-    sq      $t9,  0($a2)
+    sq      $25,  0($a2)
     sq      $v0, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
@@ -2040,14 +2068,14 @@ _MPEG_avg_chroma_Y:
     mtsab   $a3, 0
     ld      $a0,   0($a1)
     ld      $a3,  64($a1)
-    ld      $t0, 384($a1)
-    ld      $t1, 448($a1)
+    ld      $8, 384($a1)
+    ld      $9, 448($a1)
     pnor    $v0, $zero, $zero
-    addu    $a1, $a1, $t3
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
     psrlh   $v0, $v0, 15
-    pcpyld  $a0, $t0, $a0
-    pcpyld  $a3, $t1, $a3
+    pcpyld  $a0, $8, $a0
+    pcpyld  $a3, $9, $a3
     qfsrv   $a0, $a0, $a0
     qfsrv   $a3, $a3, $a3
     pextlb  $a0, $zero, $a0
@@ -2055,46 +2083,46 @@ _MPEG_avg_chroma_Y:
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    ld      $t5,   0($a1)
-    ld      $t6,  64($a1)
+    ld      $13,   0($a1)
+    ld      $14,  64($a1)
     addiu   $v1, $v1, -1
-    ld      $t7, 384($a1)
-    ld      $t8, 448($a1)
-    addu    $a1, $a1, $t3
-    pcpyld  $t5, $t7, $t5
-    pcpyld  $t6, $t8, $t6
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t6, $t6, $t6
-    pextlb  $t5, $zero, $t5
-    pextlb  $t6, $zero, $t6
-    paddh   $t1, $t5, $a0
-    paddh   $t2, $t6, $a3
-    por     $a0, $zero, $t5
-    por     $a3, $zero, $t6
-    paddh   $t1, $t1, $v0
-    paddh   $t2, $t2, $v0
-    psrlh   $t1, $t1, 1
-    psrlh   $t2, $t2, 1
-    lq      $t5,   0($a2)
-    lq      $t6, 128($a2)
-    paddh   $t1, $t1, $t5
-    paddh   $t2, $t2, $t6
-    pcgth   $t5, $t1, $zero
-    pceqh   $t6, $t1, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t1, $t1, $t5
-    pcgth   $t5, $t2, $zero
-    pceqh   $t6, $t2, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t2, $t2, $t5
-    psrlh   $t1, $t1, 1
-    psrlh   $t2, $t2, 1
-    sq      $t1,   0($a2)
-    sq      $t2, 128($a2)
+    ld      $15, 384($a1)
+    ld      $24, 448($a1)
+    addu    $a1, $a1, $11
+    pcpyld  $13, $15, $13
+    pcpyld  $14, $24, $14
+    qfsrv   $13, $13, $13
+    qfsrv   $14, $14, $14
+    pextlb  $13, $zero, $13
+    pextlb  $14, $zero, $14
+    paddh   $9, $13, $a0
+    paddh   $10, $14, $a3
+    por     $a0, $zero, $13
+    por     $a3, $zero, $14
+    paddh   $9, $9, $v0
+    paddh   $10, $10, $v0
+    psrlh   $9, $9, 1
+    psrlh   $10, $10, 1
+    lq      $13,   0($a2)
+    lq      $14, 128($a2)
+    paddh   $9, $9, $13
+    paddh   $10, $10, $14
+    pcgth   $13, $9, $zero
+    pceqh   $14, $9, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $9, $9, $13
+    pcgth   $13, $10, $zero
+    pceqh   $14, $10, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $10, $10, $13
+    psrlh   $9, $9, 1
+    psrlh   $10, $10, 1
+    sq      $9,   0($a2)
+    sq      $10, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
 2:
@@ -2107,68 +2135,68 @@ _MPEG_avg_chroma_Y:
 _MPEG_avg_luma_XY:
     mtsab   $a3, 0
     lq      $v0,   0($a1)
-    lq      $t7, 384($a1)
-    addu    $a1, $a1, $t3
-    qfsrv   $t8, $t7, $v0 
-    qfsrv   $t9, $v0, $t7
+    lq      $15, 384($a1)
+    addu    $a1, $a1, $11
+    qfsrv   $24, $15, $v0 
+    qfsrv   $25, $v0, $15
     addiu   $v1, $v1, -1
-    pextlb  $v0, $zero, $t8
-    pextub  $t7, $zero, $t8
+    pextlb  $v0, $zero, $24
+    pextub  $15, $zero, $24
     mtsab   $zero, 1
-    qfsrv   $t9, $t9, $t8
-    pextlb  $t8, $zero, $t9
-    pextub  $t9, $zero, $t9
-    paddh   $v0, $v0, $t8
-    paddh   $t7, $t7, $t9
+    qfsrv   $25, $25, $24
+    pextlb  $24, $zero, $25
+    pextub  $25, $zero, $25
+    paddh   $v0, $v0, $24
+    paddh   $15, $15, $25
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    lq      $t5,   0($a1)
-    lq      $t6, 384($a1)
+    lq      $13,   0($a1)
+    lq      $14, 384($a1)
     mtsab   $a3, 0
-    addu    $a1, $a1, $t3 
-    qfsrv   $t8, $t6, $t5
-    qfsrv   $t9, $t5, $t6
+    addu    $a1, $a1, $11 
+    qfsrv   $24, $14, $13
+    qfsrv   $25, $13, $14
     addiu   $v1, $v1, -1
-    pextlb  $t5, $zero, $t8
-    pextub  $t6, $zero, $t8
+    pextlb  $13, $zero, $24
+    pextub  $14, $zero, $24
     mtsab   $zero, 1
-    qfsrv   $t9, $t9, $t8
-    pextlb  $t8, $zero, $t9
-    pextub  $t9, $zero, $t9
-    paddh   $t5, $t5, $t8
-    paddh   $t6, $t6, $t9
-    paddh   $t8, $v0, $t5
-    paddh   $t9, $t7, $t6
-    por     $v0, $zero, $t5
-    pnor    $t5, $zero, $zero
-    por     $t7, $zero, $t6
-    psrlh   $t5, $t5, 15
-    psllh   $t5, $t5,  1
-    paddh   $t8, $t8, $t5
-    paddh   $t9, $t9, $t5
-    psrlh   $t8, $t8, 2
-    psrlh   $t9, $t9, 2
-    lq      $t5,  0($a2)
-    lq      $t6, 16($a2)
-    paddh   $t8, $t8, $t5
-    paddh   $t9, $t9, $t6
-    pcgth   $t5, $t8, $zero
-    pceqh   $t6, $t8, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t8, $t8, $t5
-    pcgth   $t5, $t9, $zero
-    pceqh   $t6, $t9, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t9, $t9, $t5
-    psrlh   $t8, $t8, 1
-    psrlh   $t9, $t9, 1
-    sq      $t8,  0($a2)
-    sq      $t9, 16($a2)
+    qfsrv   $25, $25, $24
+    pextlb  $24, $zero, $25
+    pextub  $25, $zero, $25
+    paddh   $13, $13, $24
+    paddh   $14, $14, $25
+    paddh   $24, $v0, $13
+    paddh   $25, $15, $14
+    por     $v0, $zero, $13
+    pnor    $13, $zero, $zero
+    por     $15, $zero, $14
+    psrlh   $13, $13, 15
+    psllh   $13, $13,  1
+    paddh   $24, $24, $13
+    paddh   $25, $25, $13
+    psrlh   $24, $24, 2
+    psrlh   $25, $25, 2
+    lq      $13,  0($a2)
+    lq      $14, 16($a2)
+    paddh   $24, $24, $13
+    paddh   $25, $25, $14
+    pcgth   $13, $24, $zero
+    pceqh   $14, $24, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $24, $24, $13
+    pcgth   $13, $25, $zero
+    pceqh   $14, $25, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $25, $25, $13
+    psrlh   $24, $24, 1
+    psrlh   $25, $25, 1
+    sq      $24,  0($a2)
+    sq      $25, 16($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 32
 2:
@@ -2180,80 +2208,80 @@ _MPEG_avg_luma_XY:
 
 _MPEG_avg_chroma_XY:
     mtsab   $a3, 0
-    pnor    $t9, $zero, $zero
+    pnor    $25, $zero, $zero
     ld      $a0,   0($a1)
     ld      $v0,  64($a1)
     mtsab   $zero, 1
-    ld      $t0, 384($a1)
-    ld      $t1, 448($a1)
-    pcpyld  $a0, $t0, $a0
-    pcpyld  $v0, $t1, $v0
+    ld      $8, 384($a1)
+    ld      $9, 448($a1)
+    pcpyld  $a0, $8, $a0
+    pcpyld  $v0, $9, $v0
     qfsrv   $a0, $a0, $a0
     qfsrv   $v0, $v0, $v0
-    psrlh   $t9, $t9, 15
-    psllh   $t9, $t9,  1
-    addu    $a1, $a1, $t3
+    psrlh   $25, $25, 15
+    psllh   $25, $25,  1
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
-    qfsrv   $t0, $a0, $a0
-    qfsrv   $t1, $v0, $v0
+    qfsrv   $8, $a0, $a0
+    qfsrv   $9, $v0, $v0
     pextlb  $a0, $zero, $a0
     pextlb  $v0, $zero, $v0
-    pextlb  $t0, $zero, $t0
-    pextlb  $t1, $zero, $t1
-    paddh   $a0, $a0, $t0
-    paddh   $t0, $v0, $t1
+    pextlb  $8, $zero, $8
+    pextlb  $9, $zero, $9
+    paddh   $a0, $a0, $8
+    paddh   $8, $v0, $9
     beq     $v1, $zero, 2f
     addiu   $at, $at, 1
 1:
-    ld      $t5,   0($a1)
-    ld      $t7,  64($a1)
+    ld      $13,   0($a1)
+    ld      $15,  64($a1)
     mtsab   $a3, 0
-    ld      $t6, 384($a1)
-    ld      $t8, 448($a1)
-    pcpyld  $t5, $t6, $t5
-    pcpyld  $t7, $t8, $t7
-    qfsrv   $t5, $t5, $t5
-    qfsrv   $t7, $t7, $t7
+    ld      $14, 384($a1)
+    ld      $24, 448($a1)
+    pcpyld  $13, $14, $13
+    pcpyld  $15, $24, $15
+    qfsrv   $13, $13, $13
+    qfsrv   $15, $15, $15
     addiu   $v0, $zero, 1
-    addu    $a1, $a1, $t3
+    addu    $a1, $a1, $11
     addiu   $v1, $v1, -1
     mtsab   $v0, 0
-    qfsrv   $t6, $t5, $t5
-    qfsrv   $t8, $t7, $t7
-    pextlb  $t5, $zero, $t5
-    pextlb  $t7, $zero, $t7
-    pextlb  $t6, $zero, $t6
-    pextlb  $t8, $zero, $t8
-    paddh   $t5, $t5, $t6
-    paddh   $t6, $t7, $t8
-    paddh   $t7, $a0, $t5
-    paddh   $t8, $t0, $t6
-    por     $a0, $zero, $t5
-    por     $t0, $zero, $t6
-    paddh   $t7, $t7, $t9
-    paddh   $t8, $t8, $t9
-    psrlh   $t7, $t7, 2
-    psrlh   $t8, $t8, 2
-    lq      $t5,   0($a2)
-    lq      $t6, 128($a2)
-    paddh   $t7, $t7, $t5
-    paddh   $t8, $t8, $t6
-    pcgth   $t5, $t7, $zero
-    pceqh   $t6, $t7, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t7, $t7, $t5
-    pcgth   $t5, $t8, $zero
-    pceqh   $t6, $t8, $zero
-    psrlh   $t5, $t5, 15
-    psrlh   $t6, $t6, 15
-    por     $t5, $t5, $t6
-    paddh   $t8, $t8, $t5
-    psrlh   $t7, $t7, 1
-    psrlh   $t8, $t8, 1
-    sq      $t7,   0($a2)
-    sq      $t8, 128($a2)
+    qfsrv   $14, $13, $13
+    qfsrv   $24, $15, $15
+    pextlb  $13, $zero, $13
+    pextlb  $15, $zero, $15
+    pextlb  $14, $zero, $14
+    pextlb  $24, $zero, $24
+    paddh   $13, $13, $14
+    paddh   $14, $15, $24
+    paddh   $15, $a0, $13
+    paddh   $24, $8, $14
+    por     $a0, $zero, $13
+    por     $8, $zero, $14
+    paddh   $15, $15, $25
+    paddh   $24, $24, $25
+    psrlh   $15, $15, 2
+    psrlh   $24, $24, 2
+    lq      $13,   0($a2)
+    lq      $14, 128($a2)
+    paddh   $15, $15, $13
+    paddh   $24, $24, $14
+    pcgth   $13, $15, $zero
+    pceqh   $14, $15, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $15, $15, $13
+    pcgth   $13, $24, $zero
+    pceqh   $14, $24, $zero
+    psrlh   $13, $13, 15
+    psrlh   $14, $14, 15
+    por     $13, $13, $14
+    paddh   $24, $24, $13
+    psrlh   $15, $15, 1
+    psrlh   $24, $24, 1
+    sq      $15,   0($a2)
+    sq      $24, 128($a2)
     bgtz    $v1, 1b
     addiu   $a2, $a2, 16
 2:

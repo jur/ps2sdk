@@ -36,14 +36,14 @@ static int intrOverflow(int ca)
 
    // A write to the overflow flag will clear the overflow flag 
    // --------------------------------------------------------- 
-   *T_MODE |= (1 << 11); 
+   _sw(_lw(T_MODE) | (1 << 11), T_MODE); 
 
    return -1; 
 } 
 
 void _ps2sdk_time_init(void) 
 { 
-   *T_MODE = 0x0000; // Disable T_MODE 
+   _sw(0x0000, T_MODE); // Disable T_MODE 
 
    if (s_intrOverflowID == -1) 
    {
@@ -55,15 +55,15 @@ void _ps2sdk_time_init(void)
    // CLKS: 0x02 - 1/256 of the BUSCLK (0x01 is 1/16th) 
    //  CUE: 0x01 - Start/Restart the counting 
    // OVFE: 0x01 - An interrupt is generated when an overflow occurs 
-   *T_COUNT = 0; 
-   *T_MODE = Tn_MODE(0x02, 0, 0, 0, 0, 0x01, 0, 0x01, 0, 0); 
+   _sw(0, T_COUNT); 
+   _sw(Tn_MODE(0x02, 0, 0, 0, 0, 0x01, 0, 0x01, 0, 0), T_MODE); 
 
    s_intrOverflowCount = 0; 
 } 
 
 void _ps2sdk_time_deinit(void) 
 { 
-   *T_MODE = 0x0000; // Stop the timer 
+   _sw(0x0000, T_MODE); // Stop the timer 
 
    if (s_intrOverflowID >= 0) 
    { 
@@ -80,7 +80,7 @@ clock_t clock(void)
    u64         t; 
 
    // Tn_COUNT is 16 bit precision. Therefore, each s_intrOverflowCount is 65536 ticks 
-   t = *T_COUNT + (s_intrOverflowCount << 16); 
+   t = _lw(T_COUNT) + (s_intrOverflowCount << 16); 
 
    return t; 
 }

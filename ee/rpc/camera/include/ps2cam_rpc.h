@@ -117,7 +117,7 @@ typedef struct
 
 
 
-extern char		campacket[];		//data is stored here when PS2CamReadPacket(...) is called
+//extern char		campacket[];		//data is stored here when PS2CamReadPacket(...) is called
 
 
 #ifdef __cplusplus

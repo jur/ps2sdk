@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <sys/types.h>
+#include <tamtypes.h>
 #include <io_common.h>
 #include <errno.h>
 #include <fileio.h>
@@ -27,16 +27,17 @@
 extern "C" {
 #endif
 
+typedef long off_t;
 
 /* Some aliases for the unix 'unistd' functions */
-static __inline__ int open(const char *fname, int flags, ...) { return fioOpen(fname, flags); }
-static __inline__ int close(int handle) { return fioClose(handle); }
-static __inline__ ssize_t read(int handle, void * buffer, size_t size) { return fioRead(handle, buffer, size); }
-static __inline__ ssize_t write(int handle, const void * buffer, size_t size) { return fioWrite(handle, buffer, size); }
-static __inline__ off_t lseek(int handle, off_t position, int wheel) { return fioLseek(handle, position, wheel); }
-static __inline__ off_t tell(int handle) { return fioLseek(handle, 0, 1); }
-static __inline__ int mkdir(const char *path) { return fioMkdir(path); }
-static __inline__ int rmdir(const char *path) { return fioRmdir(path); }
+static inline int open(const char *fname, int flags, ...) { return fioOpen(fname, flags); }
+static inline int close(int handle) { return fioClose(handle); }
+static inline size_t read(int handle, void * buffer, size_t size) { return fioRead(handle, buffer, size); }
+static inline size_t write(int handle, const void * buffer, size_t size) { return fioWrite(handle, buffer, size); }
+static inline off_t lseek(int handle, off_t position, int wheel) { return fioLseek(handle, position, wheel); }
+static inline off_t tell(int handle) { return fioLseek(handle, 0, 1); }
+static inline int mkdir(const char *path) { return fioMkdir(path); }
+static inline int rmdir(const char *path) { return fioRmdir(path); }
 
 /* Some win32 equivalents... baaah */
 #define _open open

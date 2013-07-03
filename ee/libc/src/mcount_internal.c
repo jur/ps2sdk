@@ -133,9 +133,9 @@ static void initialize()
 	EnableIntc(INTC_TIM);
 
 	/* fire up timer, every 1 ms */
-	*T_COUNT = 0;
-	*T_COMP = 586; /* 150MHZ / 256 / 1000 */
-	*T_MODE = 2 | (0<<2) | (0<<6) | (1<<7) | (1<<8);
+	_sw(0, T_COUNT);
+	_sw(586, T_COMP); /* 150MHZ / 256 / 1000 */
+	_sw(2 | (0<<2) | (0<<6) | (1<<7) | (1<<8), T_MODE);
 }
 
 /** Writes gmon.out dump file and stops profiling
@@ -249,9 +249,9 @@ static int profil(int ca, void *arg, void *addr)
 	}
 
 	/* reset counter */
-	*T_COUNT = 0;
+	_sw(0, T_COUNT);
 	/* reset interrupt */
-	*T_MODE |= (1 << 10);
+	_sw(_lw(T_MODE) | (1 << 10), T_MODE);
 	__asm__ volatile("sync.l; ei");
 	return 0;
 }

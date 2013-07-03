@@ -12,10 +12,12 @@ definitions for use inside the PS2 sbus project.
 
 #ifdef _EE
 #define R_LOCAL_SBUS(__reg_no) R_EE_SBUS(__reg_no)
+#define W_LOCAL_SBUS(val, __reg_no) W_EE_SBUS(val, __reg_no)
 #define PS2_SBUS_LR_FLAG PS2_SBUS_MS_FLAG
 #define PS2_SBUS_RL_FLAG PS2_SBUS_SM_FLAG
 #else
 #define R_LOCAL_SBUS(__reg_no) R_IOP_SBUS(__reg_no)
+#define W_LOCAL_SBUS(val, __reg_no) W_IOP_SBUS(val, __reg_no)
 #define PS2_SBUS_LR_FLAG PS2_SBUS_SM_FLAG
 #define PS2_SBUS_RL_FLAG PS2_SBUS_MS_FLAG
 #endif

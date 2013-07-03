@@ -57,7 +57,7 @@ void *_rpc_get_packet(struct rpc_data *rpc_data)
 	if (len > 0) {
 		packet = (SifRpcPktHeader_t *)rpc_data->pkt_table;
 
-		for (rid = 0; rid < len; rid++, (u8 *)packet += 64) {
+		for (rid = 0; rid < len; rid++, packet += ((unsigned int)packet) + 64) {
 			if (!(packet->rec_id & PACKET_F_ALLOC))
 				break;
 		}

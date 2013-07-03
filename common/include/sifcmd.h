@@ -22,6 +22,9 @@ extern "C" {
 
 #define SYSTEM_CMD	0x80000000
 
+#define DMA_ALIGN_SIZE 16
+#define DMA_ALIGN(x) ((void *) ((((u32)x) + DMA_ALIGN_SIZE - 1) & ~(DMA_ALIGN_SIZE - 1)))
+
 typedef struct t_SifCmdHeader
 {
    u32				size;

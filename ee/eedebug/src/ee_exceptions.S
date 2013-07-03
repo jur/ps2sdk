@@ -36,14 +36,14 @@ _ee_save_frame:
                         sq          $a1,   0x050($s0)
                         sq          $a2,   0x060($s0)
                         sq          $a3,   0x070($s0)
-                        sq          $t0,   0x080($s0)
-                        sq          $t1,   0x090($s0)
-                        sq          $t2,   0x0A0($s0)
-                        sq          $t3,   0x0B0($s0)
-                        sq          $t4,   0x0C0($s0)
-                        sq          $t5,   0x0D0($s0)
-                        sq          $t6,   0x0E0($s0)
-                        sq          $t7,   0x0F0($s0)
+                        sq          $8,   0x080($s0)
+                        sq          $9,   0x090($s0)
+                        sq          $10,   0x0A0($s0)
+                        sq          $11,   0x0B0($s0)
+                        sq          $12,   0x0C0($s0)
+                        sq          $13,   0x0D0($s0)
+                        sq          $14,   0x0E0($s0)
+                        sq          $15,   0x0F0($s0)
 #                        sq          $s0,   0x100($s0) # s0 already saved
                         sq          $s1,   0x110($s0)
                         sq          $s2,   0x120($s0)
@@ -65,60 +65,60 @@ _ee_save_frame:
 
 #                        sq          $ra,   0x1F0($s0)
 
-                        mfc0        $t1, EE_COP0_Status
-                        sw          $t1,   0x200($s0)
+                        mfc0        $13, EE_COP0_Status
+                        sw          $13,   0x200($s0)
 
-                        mfc0        $t1, EE_COP0_Cause
-                        sw          $t1,   0x204($s0)
+                        mfc0        $13, EE_COP0_Cause
+                        sw          $13,   0x204($s0)
 
-                        mfc0        $t1, EE_COP0_EPC
-                        sw          $t1,   0x208($s0)
+                        mfc0        $13, EE_COP0_EPC
+                        sw          $13,   0x208($s0)
 
-                        mfc0        $t1, EE_COP0_ErrorEPC
-                        sw          $t1,   0x20C($s0)
+                        mfc0        $13, EE_COP0_ErrorEPC
+                        sw          $13,   0x20C($s0)
 
-                        mfc0        $t1, EE_COP0_BadVAddr
-                        sw          $t1,   0x210($s0)
+                        mfc0        $13, EE_COP0_BadVAddr
+                        sw          $13,   0x210($s0)
 
-                        mfhi        $t1
-                        sw          $t1,   0x214($s0)
+                        mfhi        $13
+                        sw          $13,   0x214($s0)
 
-                        mfhi1       $t1
-                        sw          $t1,   0x218($s0)
+                        mfhi1       $13
+                        sw          $13,   0x218($s0)
 
-                        mflo        $t1
-                        sw          $t1,   0x21C($s0)
+                        mflo        $13
+                        sw          $13,   0x21C($s0)
 
-                        mflo1       $t1
-                        sw          $t1,   0x220($s0)
+                        mflo1       $13
+                        sw          $13,   0x220($s0)
 
-                        mfsa        $t1
-                        sw          $t1,   0x224($s0)
+                        mfsa        $13
+                        sw          $13,   0x224($s0)
 
-                        mfbpc       $t1
-                        sw          $t1,   0x228($s0)
+                        mfbpc       $13
+                        sw          $13,   0x228($s0)
                         sync.l
 
-                        li          $t1,   EE_BPC_BED
-                        mtbpc       $t1
+                        li          $13,   EE_BPC_BED
+                        mtbpc       $13
 
-                        mfiab       $t1
-                        sw          $t1,   0x22C($s0)
+                        mfiab       $13
+                        sw          $13,   0x22C($s0)
 
-                        mfiabm      $t1
-                        sw          $t1,   0x230($s0)
+                        mfiabm      $13
+                        sw          $13,   0x230($s0)
 
-                        mfdab       $t1
-                        sw          $t1,   0x234($s0)
+                        mfdab       $13
+                        sw          $13,   0x234($s0)
 
-                        mfdabm      $t1
-                        sw          $t1,   0x238($s0)
+                        mfdabm      $13
+                        sw          $13,   0x238($s0)
 
-                        mfdvb       $t1
-                        sw          $t1,   0x23C($s0)
+                        mfdvb       $13
+                        sw          $13,   0x23C($s0)
 
-                        mfdvbm      $t1
-                        sw          $t1,   0x240($s0)
+                        mfdvbm      $13
+                        sw          $13,   0x240($s0)
 
                         jr          $ra
                         nop
@@ -138,13 +138,13 @@ _ee_load_frame:
                         lq          $a1,   0x050($s0)
                         lq          $a2,   0x060($s0)
                         lq          $a3,   0x070($s0)
-                        lq          $t1,   0x090($s0)
-                        lq          $t2,   0x0A0($s0)
-                        lq          $t3,   0x0B0($s0)
-                        lq          $t4,   0x0C0($s0)
-                        lq          $t5,   0x0D0($s0)
-                        lq          $t6,   0x0E0($s0)
-                        lq          $t7,   0x0F0($s0)
+                        lq          $8,   0x080($s0)
+                        lq          $9,   0x090($s0)
+                        lq          $10,   0x0A0($s0)
+                        lq          $11,   0x0B0($s0)
+                        lq          $13,   0x0D0($s0)
+                        lq          $14,   0x0E0($s0)
+                        lq          $15,   0x0F0($s0)
 #                        lq          $s0,   0x100($s0)
                         lq          $s1,   0x110($s0)
                         lq          $s2,   0x120($s0)
@@ -165,61 +165,61 @@ _ee_load_frame:
                         lq          $fp,   0x1E0($s0)
 #                        lq          $ra,   0x1F0($s0)
 
-                        lw          $t0,   0x200($s0)
-                        mtc0        $t0, EE_COP0_Status
+                        lw          $12,   0x200($s0)
+                        mtc0        $12, EE_COP0_Status
 
-                        lw          $t0,   0x204($s0)
-                        mtc0        $t0, EE_COP0_Cause
+                        lw          $12,   0x204($s0)
+                        mtc0        $12, EE_COP0_Cause
 
-                        lw          $t0,   0x208($s0)
-                        mtc0        $t0, EE_COP0_EPC
+                        lw          $12,   0x208($s0)
+                        mtc0        $12, EE_COP0_EPC
 
-                        lw          $t0,   0x20C($s0)
-                        mtc0        $t0, EE_COP0_ErrorEPC
+                        lw          $12,   0x20C($s0)
+                        mtc0        $12, EE_COP0_ErrorEPC
 
-                        lw          $t0,   0x210($s0)
-                        mtc0        $t0, EE_COP0_BadVAddr
+                        lw          $12,   0x210($s0)
+                        mtc0        $12, EE_COP0_BadVAddr
 
-                        lw          $t0,   0x214($s0)
-                        mthi        $t0
+                        lw          $12,   0x214($s0)
+                        mthi        $12
 
-                        lw          $t0,   0x218($s0)
-                        mthi        $t0
+                        lw          $12,   0x218($s0)
+                        mthi        $12
 
-                        lw          $t0,   0x21C($s0)
-                        mtlo        $t0
+                        lw          $12,   0x21C($s0)
+                        mtlo        $12
 
-                        lw          $t0,   0x220($s0)
-                        mtlo1       $t0
+                        lw          $12,   0x220($s0)
+                        mtlo1       $12
 
-                        lw          $t0,   0x224($s0)
-                        mtsa        $t0
+                        lw          $12,   0x224($s0)
+                        mtsa        $12
 
-                        lw          $t0,   0x22C($s0)
-                        mtiab       $t0
+                        lw          $12,   0x22C($s0)
+                        mtiab       $12
 
-                        lw          $t0,   0x230($s0)
-                        mtiabm      $t0
+                        lw          $12,   0x230($s0)
+                        mtiabm      $12
 
-                        lw          $t0,   0x234($s0)
-                        mtdab       $t0
+                        lw          $12,   0x234($s0)
+                        mtdab       $12
 
-                        lw          $t0,   0x238($s0)
-                        mtdabm      $t0
+                        lw          $12,   0x238($s0)
+                        mtdabm      $12
 
-                        lw          $t0,   0x23C($s0)
-                        mtdvb       $t0
+                        lw          $12,   0x23C($s0)
+                        mtdvb       $12
 
-                        lw          $t0,   0x240($s0)
-                        mtdvbm      $t0
+                        lw          $12,   0x240($s0)
+                        mtdvbm      $12
                         sync.p
 
-                        lw          $t0,   0x228($s0)
-                        mtbpc       $t0
+                        lw          $12,   0x228($s0)
+                        mtbpc       $12
                         sync.p
 
                         jr          $ra
-                        lq          $t0,   0x080($s0)
+                        lq          $12,   0x0C0($s0)
 .end _ee_load_frame
 
 .global __ee_level2_ex_vector

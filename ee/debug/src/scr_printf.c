@@ -9,7 +9,7 @@
 #
 # $Id$
 # EE UGLY DEBUG ON SCREEN
-*/
+        */
 
 #include <stdio.h>
 #include <tamtypes.h>
@@ -36,12 +36,12 @@ struct t_setupscr
 };
 
 static struct t_setupscr setupscr __attribute__ (( aligned (16) )) = {
-  { 0x100000000000800E, 0xE, 0xA0000, 0x4C, 0x8C, 0x4E },
+  { 0x100000000000800EULL, 0xE, 0xA0000, 0x4C, 0x8C, 0x4E },
   { 27648, 30976 },
   { 0x18 },
   { 0, 639, 0, 223 },
   { 0x40, 1, 0x1a, 1, 0x46, 0, 0x45, 0x70000,
-    0x47, 0x30000, 0x47, 6, 0, 0x3F80000000000000, 1, 0x79006C00, 5,
+    0x47, 0x30000, 0x47, 6, 0, 0x3F80000000000000ULL, 1, 0x79006C00, 5,
     0x87009400, 5, 0x70000, 0x47 }
   };
 
@@ -56,12 +56,12 @@ struct t_setupchar
 };
 
 static struct t_setupchar setupchar __attribute__ (( aligned (16) )) = {
-  { 0x1000000000000004, 0xE, 0xA000000000000, 0x50 },
+  { 0x1000000000000004ULL, 0xE, 0xA000000000000ULL, 0x50 },
   { 0 },
   100, 100, 
   { 0x51 },
   { 8, 8 },
-  { 0x52, 0, 0x53, 0x800000000000010, 0}
+  { 0x52, 0, 0x53, 0x800000000000010ULL, 0}
 };
 
 /* charmap must be 16 byte aligned.  */
@@ -82,9 +82,18 @@ static int debug_detect_signal()
 
 static void Init_GS( int a, int b, int c)
 {
+#if 0
    u64	*mem = (u64 *)0x12001000;
-   
+    
    *mem = 0x200;
+#else
+   __asm__(
+       ".set push\n"
+       ".set arch = r5900\n"
+       "sd %1, 0(%0)\n"
+       ".set pop"
+       ::"r"(0x12001000),"r"(0x200));
+#endif
    GsPutIMR( 0xff00);
    SetGsCrt( a & 1, b & 0xff, c & 1);
 }
@@ -100,6 +109,7 @@ static void SetVideoMode()
 
   asm volatile ("        .set push               \n"
                 "        .set noreorder          \n"
+                "        .set arch = r5900       \n"
                 "        lui     %4, 0x000d      \n"
                 "        lui     %5, 0x0182      \n"
                 "        lui     %0, 0x1200      \n"
@@ -167,8 +177,8 @@ static void DmaReset()
                 "        lw    %1, -0x2000(%0)   \n"
                 "        ori   %1, %1, 1         \n"
                 "        sw    %1, -0x2000(%0)   \n"
-		"        .set pop                \n"
-		: "=&r" (dma_addr), "=&r" (temp) );
+                "        .set pop                \n"
+                : "=&r" (dma_addr), "=&r" (temp) );
 }
 
 /* 
@@ -187,12 +197,12 @@ static inline void progdma( void *addr, int size)
                 "        .set noreorder          \n"
                 "        lui   %0, 0x1001        \n"
                 "        sw    %3, -0x5fe0(%0)   \n"
-                "        sw    %2, -0x5ff0(%0)   \n"
-                "        li    %1, 0x101         \n"
-                "        sw    %1, -0x6000(%0)   \n"
-                "        .set pop                \n"
-                : "=&r" (dma_addr), "=&r" (temp)
-                : "r" (addr), "r" (size) );
+        "        sw    %2, -0x5ff0(%0)   \n"
+        "        li    %1, 0x101         \n"
+        "        sw    %1, -0x6000(%0)   \n"
+        "        .set pop                \n"
+        : "=&r" (dma_addr), "=&r" (temp)
+        : "r" (addr), "r" (size) );
 }                      
 
 void scr_setbgcolor(u32 color)

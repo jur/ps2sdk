@@ -49,10 +49,10 @@ static int graph_y = 0;
 static int graph_magh = 0;
 static int graph_magv = 0;
 
-static unsigned long graph_pmode = 0;
+static unsigned long long graph_pmode = 0;
 
 // old bios has GCONT enabled
-unsigned long smode1_values[22] =
+unsigned long long smode1_values[22] =
 {
 
 	0,
@@ -130,10 +130,10 @@ int graph_set_mode(int interlace, int mode, int ffmd, int flicker_filter)
 	char romname[14];
 
 	// Reset GS.
-	*GS_REG_CSR = (unsigned long)1<<9;
+	_sd((unsigned long long)1<<9, GS_REG_CSR);
 
 	// Clear GS CSR.
-	*GS_REG_CSR = GS_SET_CSR(0,0,0,0,0,0,0,0,0,0,0,0);
+	_sd(GS_SET_CSR(0,0,0,0,0,0,0,0,0,0,0,0), GS_REG_CSR);
 
 	// Unmask GS VSYNC Interrupt.
 	GsPutIMR(0x00007700);
@@ -246,15 +246,15 @@ int graph_set_screen(int x, int y, int width, int height)
 	{
 
 		// For flicker filter, we need to get add an extra line.
-		*GS_REG_DISPLAY1 = GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-1);
-		*GS_REG_DISPLAY2 = GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-2);
+		_sd(GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-1), GS_REG_DISPLAY1);
+		_sd(GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-2), GS_REG_DISPLAY2);
 
 	}
 	else
 	{
 
-		*GS_REG_DISPLAY1 = GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-1);
-		*GS_REG_DISPLAY2 = GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-1);
+		_sd(GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-1), GS_REG_DISPLAY1);
+		_sd(GS_SET_DISPLAY(dx,dy,graph_magh-1,graph_magv-1,dw-1,height-1), GS_REG_DISPLAY2);
 
 	}
 
@@ -265,10 +265,10 @@ int graph_set_screen(int x, int y, int width, int height)
 void graph_set_framebuffer_filtered(int fbp, int width, int psm, int x, int y)
 {
 
-	*GS_REG_DISPFB1 = GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y);
+	_sd(GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y), GS_REG_DISPFB1);
 
 	// For flicker filter, we need to offset the lines by 1 for the other read circuit.
-	*GS_REG_DISPFB2 = GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y+1);
+	_sd(GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y+1), GS_REG_DISPFB2);
 
 }
 
@@ -278,14 +278,14 @@ void graph_set_framebuffer(int context, int fbp, int width, int psm, int x, int 
 	if (context == 0)
 	{
 
-		*GS_REG_DISPFB1 = GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y);
+		_sd(GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y), GS_REG_DISPFB1);
 
 	}
 	else
 	{
 
 		// For flicker filter, we need to offset the lines by 1 for the other read circuit.
-		*GS_REG_DISPFB2 = GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y);
+		_sd(GS_SET_DISPFB(fbp>>11,width>>6,psm,x,y), GS_REG_DISPFB2);
 
 	}
 
@@ -294,7 +294,7 @@ void graph_set_framebuffer(int context, int fbp, int width, int psm, int x, int 
 void graph_set_bgcolor(unsigned char r, unsigned char g, unsigned char b)
 {
 
-	*GS_REG_BGCOLOR = GS_SET_BGCOLOR(r,g,b);
+	_sd(GS_SET_BGCOLOR(r,g,b), GS_REG_BGCOLOR);
 
 }
 
@@ -302,7 +302,7 @@ void graph_set_output(int rc1, int rc2, int alpha_select, int alpha_output, int 
 {
 
 	graph_pmode  = GS_SET_PMODE(rc1, rc2, alpha_select, alpha_output, blend_method, alpha);
-	*GS_REG_PMODE = graph_pmode;
+	_sd(graph_pmode, GS_REG_PMODE);
 
 }
 
@@ -355,7 +355,7 @@ void graph_set_smode1(char cmod, char gcont)
 	if ((graph_crtmode < 0x04) || (graph_crtmode > 0x50))
 	{
 
-		smode1_val |= (unsigned long)(gcont & 1) << 25;
+		smode1_val |= (unsigned long long)(gcont & 1) << 25;
 
 	}
 
@@ -363,15 +363,15 @@ void graph_set_smode1(char cmod, char gcont)
 	if ((graph_crtmode < 0x04) && (cmod > 0x01) && (cmod < 0x04))
 	{
 
-		smode1_val |= (unsigned long)(cmod & 3) << 13;
+		smode1_val |= (unsigned long long)(cmod & 3) << 13;
 
 	}
 
 	// Turn off read circuits.
-	*GS_REG_PMODE  = graph_pmode & ~3;
+	_sd(graph_pmode & ~3, GS_REG_PMODE);
 
 	// Disable PRST for TV modes and enable for all other modes.
-	*GS_REG_SMODE1 = smode1_val | (unsigned long)1 << 16;
+	_sd(smode1_val | (unsigned long long)1 << 16, GS_REG_SMODE1);
 
 	asm volatile ("sync.l; sync.p;");
 
@@ -379,16 +379,16 @@ void graph_set_smode1(char cmod, char gcont)
 	if ((graph_crtmode >= 0x1A) && (graph_crtmode != 0x50) && (graph_crtmode != 0x53))
 	{
 
-		*GS_REG_SMODE1 = smode1_val & ~((unsigned long)1 << 16);
+		_sd(smode1_val & ~((unsigned long long)1 << 16), GS_REG_SMODE1);
 		__udelay(2500);
 
 	}
 
 	// Now disable both bits PRST & SINT.
-	*GS_REG_SMODE1 = smode1_val & ~((unsigned long)1 << 16) & ~((unsigned long)1 << 17);
+	_sd(smode1_val & ~((unsigned long long)1 << 16) & ~((unsigned long long)1 << 17), GS_REG_SMODE1);
 
 	// Now enable read circuits.
-	*GS_REG_PMODE  = pmode_val;
+	_sd(pmode_val, GS_REG_PMODE);
 
 	asm volatile ("sync.l; sync.p;");
 
@@ -431,10 +431,10 @@ int graph_shutdown(void)
 	graph_disable_output();
 
 	// Reset GS.
-	*GS_REG_CSR = (unsigned long)1<<9;
+	_sd((unsigned long long)1<<9, GS_REG_CSR);
 
 	// Clear GS CSR.
-	*GS_REG_CSR = GS_SET_CSR(0,0,0,0,0,0,0,0,0,0,0,0);
+	_sd(GS_SET_CSR(0,0,0,0,0,0,0,0,0,0,0,0), GS_REG_CSR);
 
 	// Reset the static variables.
 	graph_aspect = 1.0f;

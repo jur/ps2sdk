@@ -59,10 +59,13 @@ typedef volatile struct st_PS2_SBUS_Registers
 // PS1 Mode Reset, EE->IOP.  Resets IOP into "PS1 Mode" though EE needs to do some initializing first.
 #define SBUS_CTRL_PS1_RESET (1 << 19)
 
-#define R_PS2_SBUS(__base_addr, __reg_no) ((vu32 *) ((u32) (__base_addr) + (__reg_no * 0x10)))
+#define R_PS2_SBUS(__base_addr, __reg_no) (_lw((u32) (__base_addr) + (__reg_no * 0x10)))
+#define W_PS2_SBUS(__base_addr, val, __reg_no) (_sw(val, (u32) (__base_addr) + (__reg_no * 0x10)))
 
 #define R_EE_SBUS(__reg_no) R_PS2_SBUS(A_EE_SBUS_REG_BASE, (__reg_no))
+#define W_EE_SBUS(val, __reg_no) W_PS2_SBUS(A_EE_SBUS_REG_BASE, val, (__reg_no))
 #define R_IOP_SBUS(__reg_no) R_PS2_SBUS(A_IOP_SBUS_REG_BASE, (__reg_no))
+#define W_IOP_SBUS(val, __reg_no) W_PS2_SBUS(A_IOP_SBUS_REG_BASE, val, (__reg_no))
 
 #define PS2_SBUS_MS_ADDR    (0)
 #define PS2_SBUS_SM_ADDR    (1)

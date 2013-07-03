@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <kernel.h>
+#include <tamtypes.h>
 
 static _MPEGContext s_MPEG12Ctx;
 static long*        s_pCurPTS;
@@ -386,7 +387,7 @@ static void _ext_seq ( void ) {
 
  s_MPEG12Ctx.m_fMPEG2 = 1;
 
- *( volatile unsigned int* )0x10002010 &= 0xFF7FFFFF;
+ _sw(_lw(0x10002010) & 0xFF7FFFFF, 0x10002010);
 
  lProfLevel                   = _MPEG_GetBits ( 8 );
  s_MPEG12Ctx.m_fProgSeq       = _MPEG_GetBits ( 1 );

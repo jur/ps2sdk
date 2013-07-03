@@ -1021,8 +1021,8 @@ static int npm_puts_init()
 
 int npmPuts(const char *buf)
 {
-	u8 puts_buf[512]; /* Implicitly aligned. */
-	void *p = puts_buf;
+	u8 puts_buf[512 + DMA_ALIGN_SIZE];
+	void *p = DMA_ALIGN(puts_buf);
 
 	if (npm_puts_init() < 0)
 		return -E_LIB_API_INIT;

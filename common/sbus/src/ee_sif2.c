@@ -28,7 +28,7 @@ void SIF2_sync_dma(void)
 
     while(1)
     {
-        if(!(*R_EE_D7_CHCR & EE_CHCR_STR))
+        if(!(R_EE_D7_CHCR & EE_CHCR_STR))
         {
             if((_sif2_xfer_addr != 0) && (_sif2_xfer_size > 0))
             {
@@ -59,17 +59,17 @@ int SIF2_RestartDma(void)
     M_SuspendIntr(&oldi);
 
 // disable CH7 interrupt and clear interrupt status
-    *R_EE_D_STAT &= 0x00800080;
+    _sw(R_EE_D_STAT & 0x00800080, A_EE_D_STAT);
 
 // enable CH7 priority
 //    *R_EE_D_PCR |= 0x00800000;
 
     _sif2_xfer_chunk_size = (_sif2_xfer_size > SIF2_XFER_CHUNK_SIZE) ? SIF2_XFER_CHUNK_SIZE : _sif2_xfer_size;
 
-    *R_EE_D7_CHCR = 0;
-    *R_EE_D7_MADR = (_sif2_xfer_addr & 0x0FFFFFFF);
-    *R_EE_D7_QWC = ((_sif2_xfer_chunk_size + 15) / 16);
-    *R_EE_D7_CHCR = _sif2_xfer_attr | EE_CHCR_STR;
+    _sw(0, A_EE_D7_CHCR);
+    _sw(_sif2_xfer_addr & 0x0FFFFFFF, A_EE_D7_MADR);
+    _sw((_sif2_xfer_chunk_size + 15) / 16, A_EE_D7_QWC);
+    _sw(_sif2_xfer_attr | EE_CHCR_STR, A_EE_D7_CHCR);
 
     M_ResumeIntr(oldi);
 }
@@ -98,12 +98,12 @@ int SIF2_init(void)
     M_SuspendIntr(&oldi);
 
     // Enable DMA
-    *R_EE_D_CTRL |= 1;
+    _sw(R_EE_D_CTRL | 1, A_EE_D_CTRL);
 
-    *R_LOCAL_SBUS(PS2_SBUS_REG4) = 0x00000100;
-    *R_LOCAL_SBUS(PS2_SBUS_REG6) = 0x000000FF;
+    W_LOCAL_SBUS(0x00000100, PS2_SBUS_REG4);
+    W_LOCAL_SBUS(0x000000FF, PS2_SBUS_REG6);
 
-    *R_EE_D7_CHCR = 0;
+    _sw(0, A_EE_D7_CHCR);
 
     M_ResumeIntr(oldi);
 
@@ -123,7 +123,7 @@ int SIF2_deinit(void)
     _DisableDmac(7);
 
     M_SuspendIntr(&oldi);
-    *R_EE_D7_CHCR = 0;
+    _sw(0, A_EE_D7_CHCR);
     M_ResumeIntr(oldi);
 
     _sif2_inited = 0;

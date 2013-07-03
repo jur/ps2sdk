@@ -105,7 +105,7 @@ typedef struct _MPEGMotions {
 typedef struct _MPEGContext {
 
  MPEGSequenceInfo  m_SI;
- long              m_FwdPTS;
+ long              m_FwdPTS; // TBD: Check for 32/64 bit compatibility
  long              m_BckPTS;
  long              m_AuxPTS;
  int               m_MBWidth;

@@ -22,7 +22,8 @@
    is preserved.
    ============================================================  */
 	
-	 .text
+	.text
+	.set arch=r5900
 	.p2align 3
 	.globl	strncat
 	.text
